@@ -1,0 +1,22 @@
+[0.562s] Invoking command in '/home/devam/FYP_ROS2/build/ekf_localization': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_localization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/devam/FYP_ROS2/build/ekf_localization/build --no-deps symlink_data
+[0.781s] running develop
+[0.921s] running egg_info
+[0.921s] creating ekf_localization.egg-info
+[0.930s] writing ekf_localization.egg-info/PKG-INFO
+[0.930s] writing dependency_links to ekf_localization.egg-info/dependency_links.txt
+[0.930s] writing requirements to ekf_localization.egg-info/requires.txt
+[0.930s] writing top-level names to ekf_localization.egg-info/top_level.txt
+[0.930s] writing manifest file 'ekf_localization.egg-info/SOURCES.txt'
+[0.947s] reading manifest file 'ekf_localization.egg-info/SOURCES.txt'
+[0.947s] writing manifest file 'ekf_localization.egg-info/SOURCES.txt'
+[0.956s] running build_ext
+[0.956s] Creating /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf-localization.egg-link (link to .)
+[0.957s] 
+[0.957s] Installed /home/devam/FYP_ROS2/build/ekf_localization
+[0.957s] running symlink_data
+[0.957s] creating /home/devam/FYP_ROS2/install/ekf_localization/share/ament_index
+[0.957s] creating /home/devam/FYP_ROS2/install/ekf_localization/share/ament_index/resource_index
+[0.957s] creating /home/devam/FYP_ROS2/install/ekf_localization/share/ament_index/resource_index/packages
+[0.957s] symbolically linking /home/devam/FYP_ROS2/build/ekf_localization/resource/ekf_localization -> /home/devam/FYP_ROS2/install/ekf_localization/share/ament_index/resource_index/packages
+[0.957s] symbolically linking /home/devam/FYP_ROS2/build/ekf_localization/package.xml -> /home/devam/FYP_ROS2/install/ekf_localization/share/ekf_localization
+[0.977s] Invoked command in '/home/devam/FYP_ROS2/build/ekf_localization' returned '0': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_localization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/devam/FYP_ROS2/build/ekf_localization/build --no-deps symlink_data

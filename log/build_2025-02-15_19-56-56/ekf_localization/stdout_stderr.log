@@ -1,0 +1,20 @@
+running develop
+running egg_info
+writing ekf_localization.egg-info/PKG-INFO
+writing dependency_links to ekf_localization.egg-info/dependency_links.txt
+writing entry points to ekf_localization.egg-info/entry_points.txt
+writing requirements to ekf_localization.egg-info/requires.txt
+writing top-level names to ekf_localization.egg-info/top_level.txt
+reading manifest file 'ekf_localization.egg-info/SOURCES.txt'
+writing manifest file 'ekf_localization.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf-localization.egg-link (link to .)
+Installing lidar_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing test_pub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing test_pubsub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing test_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+
+Installed /home/devam/FYP_ROS2/build/ekf_localization
+running symlink_data
+symbolically linking /home/devam/FYP_ROS2/build/ekf_localization/resource/ekf_localization -> /home/devam/FYP_ROS2/install/ekf_localization/share/ament_index/resource_index/packages
+symbolically linking /home/devam/FYP_ROS2/build/ekf_localization/package.xml -> /home/devam/FYP_ROS2/install/ekf_localization/share/ekf_localization

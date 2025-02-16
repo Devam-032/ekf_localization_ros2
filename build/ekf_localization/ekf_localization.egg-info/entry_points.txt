@@ -1,0 +1,6 @@
+[console_scripts]
+lidar_sub = ekf_localization.lidar_sub:main
+odom_sub = ekf_localization.odom_sub:main
+test_pub = ekf_localization.pub:main
+test_pubsub = ekf_localization.pubsub:main
+test_sub = ekf_localization.sub:main

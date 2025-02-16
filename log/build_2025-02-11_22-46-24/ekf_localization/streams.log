@@ -1,0 +1,18 @@
+[0.498s] Invoking command in '/home/devam/FYP_ROS2/build/ekf_localization': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_localization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/devam/FYP_ROS2/build/ekf_localization/build --no-deps symlink_data
+[0.691s] running develop
+[0.813s] running egg_info
+[0.820s] writing ekf_localization.egg-info/PKG-INFO
+[0.820s] writing dependency_links to ekf_localization.egg-info/dependency_links.txt
+[0.820s] writing entry points to ekf_localization.egg-info/entry_points.txt
+[0.820s] writing requirements to ekf_localization.egg-info/requires.txt
+[0.820s] writing top-level names to ekf_localization.egg-info/top_level.txt
+[0.835s] reading manifest file 'ekf_localization.egg-info/SOURCES.txt'
+[0.836s] writing manifest file 'ekf_localization.egg-info/SOURCES.txt'
+[0.844s] running build_ext
+[0.844s] Creating /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf-localization.egg-link (link to .)
+[0.844s] Installing test_node script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[0.844s] Installing test_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[0.844s] 
+[0.844s] Installed /home/devam/FYP_ROS2/build/ekf_localization
+[0.844s] running symlink_data
+[0.864s] Invoked command in '/home/devam/FYP_ROS2/build/ekf_localization' returned '0': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_localization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/devam/FYP_ROS2/build/ekf_localization/build --no-deps symlink_data

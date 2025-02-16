@@ -1,0 +1,16 @@
+running develop
+running egg_info
+writing ekf_localization.egg-info/PKG-INFO
+writing dependency_links to ekf_localization.egg-info/dependency_links.txt
+writing entry points to ekf_localization.egg-info/entry_points.txt
+writing requirements to ekf_localization.egg-info/requires.txt
+writing top-level names to ekf_localization.egg-info/top_level.txt
+reading manifest file 'ekf_localization.egg-info/SOURCES.txt'
+writing manifest file 'ekf_localization.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf-localization.egg-link (link to .)
+Installing test_node script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing test_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+
+Installed /home/devam/FYP_ROS2/build/ekf_localization
+running symlink_data

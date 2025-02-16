@@ -1,0 +1,48 @@
+[0.524s] Invoking command in '/home/devam/FYP_ROS2/build/ekf_localization': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_localization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/devam/FYP_ROS2/build/ekf_localization/build
+[0.702s] running develop
+[0.824s] Removing /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf-localization.egg-link (link to .)
+[0.844s] Invoked command in '/home/devam/FYP_ROS2/build/ekf_localization' returned '0': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_localization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/devam/FYP_ROS2/build/ekf_localization/build
+[0.846s] Invoking command in '/home/devam/FYP_ROS2/src/ekf_localization': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_localization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/ekf_localization build --build-base /home/devam/FYP_ROS2/build/ekf_localization/build install --record /home/devam/FYP_ROS2/build/ekf_localization/install.log --single-version-externally-managed install_data --force
+[1.038s] running egg_info
+[1.045s] writing ../../build/ekf_localization/ekf_localization.egg-info/PKG-INFO
+[1.045s] writing dependency_links to ../../build/ekf_localization/ekf_localization.egg-info/dependency_links.txt
+[1.045s] writing entry points to ../../build/ekf_localization/ekf_localization.egg-info/entry_points.txt
+[1.045s] writing requirements to ../../build/ekf_localization/ekf_localization.egg-info/requires.txt
+[1.045s] writing top-level names to ../../build/ekf_localization/ekf_localization.egg-info/top_level.txt
+[1.060s] reading manifest file '../../build/ekf_localization/ekf_localization.egg-info/SOURCES.txt'
+[1.060s] writing manifest file '../../build/ekf_localization/ekf_localization.egg-info/SOURCES.txt'
+[1.060s] running build
+[1.060s] running build_py
+[1.060s] creating /home/devam/FYP_ROS2/build/ekf_localization/build
+[1.060s] creating /home/devam/FYP_ROS2/build/ekf_localization/build/lib
+[1.060s] creating /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+[1.060s] copying ekf_localization/pub.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+[1.060s] copying ekf_localization/lidar_sub.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+[1.060s] copying ekf_localization/sub.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+[1.060s] copying ekf_localization/__init__.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+[1.060s] copying ekf_localization/pubsub.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+[1.061s] running install
+[1.063s] running install_lib
+[1.070s] creating /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+[1.070s] copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/pub.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+[1.070s] copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/lidar_sub.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+[1.070s] copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/sub.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+[1.070s] copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/__init__.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+[1.070s] copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/pubsub.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+[1.071s] byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/pub.py to pub.cpython-310.pyc
+[1.071s] byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/lidar_sub.py to lidar_sub.cpython-310.pyc
+[1.071s] byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/sub.py to sub.cpython-310.pyc
+[1.071s] byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/__init__.py to __init__.cpython-310.pyc
+[1.071s] byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/pubsub.py to pubsub.cpython-310.pyc
+[1.071s] running install_data
+[1.071s] copying resource/ekf_localization -> /home/devam/FYP_ROS2/install/ekf_localization/share/ament_index/resource_index/packages
+[1.071s] copying package.xml -> /home/devam/FYP_ROS2/install/ekf_localization/share/ekf_localization
+[1.071s] running install_egg_info
+[1.079s] Copying ../../build/ekf_localization/ekf_localization.egg-info to /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization-0.0.0-py3.10.egg-info
+[1.079s] running install_scripts
+[1.108s] Installing lidar_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[1.108s] Installing test_pub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[1.108s] Installing test_pubsub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[1.108s] Installing test_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[1.108s] writing list of installed files to '/home/devam/FYP_ROS2/build/ekf_localization/install.log'
+[1.124s] Invoked command in '/home/devam/FYP_ROS2/src/ekf_localization' returned '0': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_localization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/ekf_localization build --build-base /home/devam/FYP_ROS2/build/ekf_localization/build install --record /home/devam/FYP_ROS2/build/ekf_localization/install.log --single-version-externally-managed install_data --force
