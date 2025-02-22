@@ -3,11 +3,13 @@ import rclpy,math
 import numpy as np
 import rclpy.logging
 from  rclpy.node import Node
+import rclpy.time
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from gazebo_msgs.msg import ModelStates
 from nav_msgs.msg import Odometry
-from tf_transformations import euler_from_quaternion
+from tf_transformations import euler_from_quaternion,quaternion_from_euler
+from rclpy.clock import Clock
 
 def normalize_angle(angle):
     return (angle + math.pi) % (2 * math.pi) - math.pi 
@@ -24,7 +26,10 @@ class EKF_LOCALIZATION(Node):
         self.delta_rot2 = 0.0
         self.x_prev = 0.0
         self.y_prev = 0.0
+        self.sigma_r = 0.1 # This is to define standard deviation in the distance measurement
+        self.sigma_alpha = 0.01  # This is to define the standard deviation in the angle measurement
         self.theta_prev = 0.0
+        self.pose_pub = self.create_publisher(PoseWithCovarianceStamped,"/pose_with_cov_stamped",10)
 
     def laserCb(self,msg:LaserScan):
         """This Function filters the lidar scan data and then stores it in a class variable."""
@@ -96,7 +101,7 @@ class EKF_LOCALIZATION(Node):
         self.rot1_variance = alpha1 * abs(self.delta_rot1) + alpha2 * abs(self.delta_trans)
         self.trans_variance = alpha3 * abs(self.delta_trans) + alpha4 * (abs(self.delta_rot1) + abs(self.delta_rot2))
         self.rot2_variance = alpha1 * abs(self.delta_rot2) + alpha2 * abs(self.delta_trans)
-        control_covariance = np.diag([self.rot1_variance, self.trans_variance, self.rot2_variance])
+        control_covariance = np.diag([self.rot1_variance, self.trans_variance, self.rot2_variance]) #M_t matrix
 
         self.covariance = np.dot(self.G_t, np.dot(self.final_covariance, self.G_t.T)) + np.dot(self.V, np.dot(control_covariance, self.V.T))
 
@@ -113,7 +118,7 @@ class EKF_LOCALIZATION(Node):
                 jumps[i] = derivative
                 jumps_index.append(i)
     
-        cylin_detected,no_of_rays,sum_ray_indices,sum_depth,count,i=0,0,0,0,0,-1
+        cylin_detected,no_of_rays,sum_ray_indices,sum_depth,i=0,0,0,0,0,-1
         self.approx_linear_distance,self.approx_angular_position =[],[]
         while(i<len(jumps)-1):
             i+=1
@@ -151,46 +156,159 @@ class EKF_LOCALIZATION(Node):
                 pass #do_nothing
     
     def z_matrix_acc_to_measurement(self):
-        self.z_meas = np.vstack(self.approx_linear_distance,self.approx_angular_position)
-    
+        self.z_meas = np.vstack((self.approx_linear_distance, self.approx_angular_position))
+
     def z_matrix_acc_to_pos(self):
         dist_estim = []
         angle_estim = []
+        self.x_estim_diff = []
+        self.y_estim_diff = []
         for i in range(len(self.reference_cylin)):
-            dist_estim.append(math.sqrt((self.x_predicted - self.reference_cylin[i][0])**2 + (self.y_predicted - self.reference_cylin[i][1])**2))
-            angle_estim.append(normalize_angle(math.atan2(self.reference_cylin[i][1]-self.y_predicted,self.reference_cylin[i][0]-self.x_predicted) - normalize_angle(self.theta_predicted)))
-        self.z_estim = np.vstack(dist_estim,angle_estim)
- 
+            self.x_estim_diff.append(self.x_predicted - self.reference_cylin[i][0])
+            self.y_estim_diff.append(self.y_predicted - self.reference_cylin[i][1])
+            dist_estim.append(math.sqrt((self.x_predicted - self.reference_cylin[i][0])**2 +
+                                        (self.y_predicted - self.reference_cylin[i][1])**2))
+            angle = math.atan2(self.reference_cylin[i][1] - self.y_predicted,
+                            self.reference_cylin[i][0] - self.x_predicted)
+            angle_estim.append(normalize_angle(angle - normalize_angle(self.theta_predicted)))
+        self.z_estim = np.vstack((dist_estim, angle_estim))
+        self.diff_estim = np.vstack((self.x_estim_diff, self.y_estim_diff))
+
     def cylin_pairing(self):
-        # Ensure both z_estim and z_meas have been computed
+        # Check that both matrices have been computed.
         if not hasattr(self, 'z_estim') or not hasattr(self, 'z_meas'):
             print("Error: z_estim and/or z_meas not computed.")
             return
         
-        tolerance = 1e-6
-        # Lists to store paired distance and angle values.
-        paired_dist = []
-        paired_alpha = []
+        tolerance = 1e-6  # Tolerance for comparing floating point values.
         
+        # Lists to store paired measurement data.
+        paired_meas_dist = []
+        paired_meas_angle = []
+        
+        # Lists to store corresponding estimated data.
+        paired_estim_dist = []
+        paired_estim_angle = []
+
+        # Lists to store corresponding estimated differences.
+        paired_estim_diff_x = []
+        paired_estim_diff_y = [] 
+
         num_estim = self.z_estim.shape[1]
         num_meas = self.z_meas.shape[1]
         
+        # Compare every column in the estimated matrix with every column in the measurement matrix.
         for i in range(num_estim):
             for j in range(num_meas):
                 # Compare both the distance and angular components.
                 if np.allclose(self.z_estim[:, i], self.z_meas[:, j], atol=tolerance):
-                    # Append the measurement values (distance and alpha) to the paired lists.
-                    paired_dist.append(self.z_meas[0, j])
-                    paired_alpha.append(self.z_meas[1, j])
-                    break  # Stop after finding the first matching column in z_meas.
+                    # When a match is found, store the measurement values...
+                    paired_meas_dist.append(self.z_meas[0, j])
+                    paired_meas_angle.append(self.z_meas[1, j])
+                    # ...and store the corresponding estimation values.
+                    paired_estim_dist.append(self.z_estim[0, i])
+                    paired_estim_angle.append(self.z_estim[1, i])
+                    # ...and store the corresponding differences.
+                    paired_estim_diff_x.append(self.diff_estim[0, i])
+                    paired_estim_diff_y.append(self.diff_estim[1, i])
+                    break  # Found a match for z_estim column i; move to next.
         
-        # Combine paired values into a new 2 x N matrix (if any pairings were found).
-        if paired_dist and paired_alpha:
-            self.paired_measurements = np.vstack((paired_dist, paired_alpha))
+        # Create matrices from the paired data (if any pairs were found).
+        if paired_meas_dist and paired_meas_angle:
+            self.paired_measurements = np.vstack((paired_meas_dist, paired_meas_angle))
         else:
             self.paired_measurements = np.array([])
         
-        print("Paired measurements (distance and angle):")
-        print(self.paired_measurements)
+        if paired_estim_dist and paired_estim_angle:
+            self.paired_estimations = np.vstack((paired_estim_dist, paired_estim_angle))
+        else:
+            self.paired_estimations = np.array([])
+        
+        if paired_estim_diff_x and paired_estim_diff_y:
+            self.paired_estim_diff = np.vstack((paired_estim_diff_x, paired_estim_diff_y))
+        else:
+            self.paired_estim_diff = np.array([])
 
-    
+
+    def obs_model(self):
+        
+        for i in range(len(self.paired_measurements)):
+
+            meas_dist = self.paired_measurements[i][0]
+            meas_ang = self.paired_measurements[i][1]
+            z_matrix = np.array([
+                [meas_dist],
+                [meas_ang]
+            ])
+
+            h_matrix = np.array([
+                [self.paired_estimations[i][0]],
+                [self.paired_estimations[i][1]]
+            ])
+
+            H_t_mat = np.array([
+                [(-self.paired_estim_diff[i][0]/(self.paired_estimations[0])),(-self.paired_estim_diff[i][1]/(self.paired_estimations[i][0])),0],
+                [(self.paired_estim_diff[i][1]/((self.paired_estimations[0])**2)),(-self.paired_estim_diff[i][0]/((self.paired_estimations[i][0])**2)),-1]
+            ])
+               
+            q_matrix = np.array([
+                [self.sigma_r**2 , 0 ],
+                [0 , self.sigma_alpha**2]
+            ])
+
+            self.covariance = np.array(self.covariance)
+
+            k_gain = np.dot(self.covariance,np.dot(H_t_mat.T,np.linalg.inv(np.dot(H_t_mat,np.dot(self.covariance,H_t_mat.T)))+q_matrix)) # to claculate the kalman gain for each observed cylinder
+
+            Innovation_matrix = np.array([
+                [z_matrix[0, 0] - h_matrix[0, 0]],  # distance difference
+                [normalize_angle(z_matrix[1, 0] - h_matrix[1, 0])]  # angle difference
+            ])
+
+            self.mu =  self.mu_bar + np.dot(k_gain , Innovation_matrix)
+
+            Identity = np.eye(3)
+
+            self.final_covariance = np.dot((Identity - np.dot(k_gain,H_t_mat)),self.covariance) # final covariance calculation
+
+        if (len(self.match_pairs_left)==0):
+            self.mu = self.mu_bar
+            self.final_covariance = self.covariance
+            #(len(self.match_pairs_left))
+        #print(self.final_covariance)
+        self.obs_bot_position = np.array([
+            [self.x],
+            [self.y],
+            [self.theta]
+        ])
+
+        self.error_in_estim_positions = self.mu-self.obs_bot_position
+        self.x_prev = self.x
+        self.y_prev = self.y
+        self.theta_prev = self.theta
+
+    def publish_pose_with_covariance(self):
+        clock = Clock()
+        pose_msg = PoseWithCovarianceStamped()
+        pose_msg.header.stamp = clock.now().to_msg()
+
+        pose_msg.header.frame_id = "odom"  # Use the appropriate frame of reference
+
+        # Setting the pose based on the mean (mu)
+        pose_msg.pose.pose.position.x = self.mu[0, 0]
+        pose_msg.pose.pose.position.y = self.mu[1, 0]
+        pose_msg.pose.pose.position.z = 0  # Assume planar navigation
+
+        # Convert orientation from Euler to quaternion
+        quat = quaternion_from_euler(0, 0, self.mu[2, 0])
+        pose_msg.pose.pose.orientation.x = quat[0]
+        pose_msg.pose.pose.orientation.y = quat[1]
+        pose_msg.pose.pose.orientation.z = quat[2]
+        pose_msg.pose.pose.orientation.w = quat[3]
+
+        # Fill in the covariance (flattened row-major order)
+        covariance_flat = self.final_covariance.flatten()
+        pose_msg.pose.covariance = [covariance_flat[i] if i < len(covariance_flat) else 0 for i in range(36)]
+
+        # Publish the message
+        self.pose_pub.publish(pose_msg)
