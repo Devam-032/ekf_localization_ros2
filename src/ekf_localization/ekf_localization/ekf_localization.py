@@ -158,7 +158,7 @@ class EKF_LOCALIZATION(Node):
                 jumps[i] = derivative
             # Else, jumps[i] remains 0.0
         
-        self.get_logger().info(f"Detected jumps: {jumps}")
+        # self.get_logger().info(f"Detected jumps: {jumps}")
 
         # Process the jumps to group rays into cylinder detections.
         self.approx_linear_distance = []
@@ -199,8 +199,8 @@ class EKF_LOCALIZATION(Node):
             i += 1
 
         # For debugging, print number of detected measurements:
-        num_meas = len(self.approx_linear_distance)
-        self.get_logger().info(f"Number of cylinder measurements: {num_meas}")
+        # num_meas = len(self.approx_linear_distance)
+        # self.get_logger().info(f"Number of cylinder measurements: {num_meas}")
 
     def z_matrix_acc_to_measurement(self):
         """
@@ -208,7 +208,7 @@ class EKF_LOCALIZATION(Node):
         first row contains measured distances and the second row measured angles.
         """
         self.z_meas = np.vstack((self.approx_linear_distance, self.approx_angular_position))
-        self.get_logger().info(f"z_meas shape: {self.z_meas.shape}")
+        # self.get_logger().info(f"z_meas shape: {self.z_meas.shape}")
 
     def z_matrix_acc_to_pos(self):
         """
@@ -430,7 +430,7 @@ class EKF_LOCALIZATION(Node):
         else:
             # If there are no paired estimations, you might choose to publish an empty MarkerArray to clear previous markers.
             marker_array.markers = []
-            print('noooooo')
+            # print('noooooo')
         
         self.marker_pub.publish(marker_array)
 

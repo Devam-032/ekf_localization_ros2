@@ -22,4 +22,5 @@ ekf_localization.egg-info/entry_points.txt
 ekf_localization.egg-info/requires.txt
 ekf_localization.egg-info/top_level.txt
 ekf_localization.egg-info/zip-safe
+launch/ekf_localization.launch.py
 resource/ekf_localization

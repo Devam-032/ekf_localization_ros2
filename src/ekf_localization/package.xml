@@ -17,8 +17,11 @@
   <depend>sensor_msgs</depend>
   <depend>tf_transformations</depend>
   <depend>nav_msgs</depend>
+  <depend>launch</depend>
+  <depend>launch_ros</depend>
   
   <export>
     <build_type>ament_python</build_type>
+    <launch/>
   </export>
 </package>
