@@ -25,6 +25,7 @@ setup(
             "test_pubsub = ekf_localization.pubsub:main",
             "lidar_sub = ekf_localization.lidar_sub:main",
             "odom_sub = ekf_localization.odom_sub:main",
+            "localization = ekf_localization.ekf_localization:main",
         ],
     },
 )
