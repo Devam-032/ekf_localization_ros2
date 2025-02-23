@@ -299,7 +299,15 @@ class EKF_LOCALIZATION(Node):
                 h_matrix = np.array([[self.paired_estimations[0, i]], [self.paired_estimations[1, i]]])
     
                 # Here we use a dummy observation Jacobian for illustration.
-                H_t_mat = np.eye(2, 3)  # Replace with your actual Jacobian calculation
+                H_t_mat = np.array([
+                    [(-self.paired_estim_diff[0, i] / self.paired_estimations[0, i]),
+                    (-self.paired_estim_diff[1, i] / self.paired_estimations[0, i]),
+                    0],
+                    [(self.paired_estim_diff[1, i] / (self.paired_estimations[0, i] ** 2)),
+                    (-self.paired_estim_diff[0, i] / (self.paired_estimations[0, i] ** 2)),
+                    -1]
+                ])
+
     
                 q_matrix = np.array([
                     [self.sigma_r**2, 0],
