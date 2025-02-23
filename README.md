@@ -97,9 +97,29 @@ ekf_localization/
   ```bash
   rviz2 -d ~/FYP_ROS2/src/ekf_localization/rviz/default.rviz
   ```
-### **4. World not getting launched**  
-- If Gazebo World doesn’t load properly, manually place `fyp_world` in the /home/devam/turtlebot3_ws/src/turtlebot3_simulations/turtlebot3_gazebo/worlds 
-  and also change the world file in /home/devam/turtlebot3_ws/src/turtlebot3_simulations/turtlebot3_gazebo/launch/empty_world.launch.py to fyp_world.
+### **4. Gazebo World Not Launching**  
+ If the Gazebo world does not load correctly, follow these steps to resolve the issue:
+
+1. **Manually place the world file**  
+   - Move your `fyp_world` file to the following directory:  
+     ```bash
+     mv /path/to/fyp_world /home/devam/turtlebot3_ws/src/turtlebot3_simulations/turtlebot3_gazebo/worlds/
+     ```
+
+2. **Update the launch file**  
+   - Open the `empty_world.launch.py` file in a text editor:  
+     ```bash
+     nano /home/devam/turtlebot3_ws/src/turtlebot3_simulations/turtlebot3_gazebo/launch/empty_world.launch.py
+     ```
+   - Locate the line that specifies the world file and modify it to use `fyp_world`:  
+     ```python
+     world_name = 'fyp_world'
+     ```
+   - Save and exit the file.  
+
+After making these changes, try launching the world again.
+
+
 
 ---
 
