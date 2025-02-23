@@ -1,6 +1,10 @@
+
 # **EKF Localization for TurtleBot3 (ROS2 Humble)**  
 
-This repository implements **Extended Kalman Filter (EKF) localization** for **TurtleBot3** in **ROS2 Humble**, utilizing Gazebo and RViz for simulation and visualization.  
+![EKF Localization Outcome](image.png)
+
+This repository implements **Extended Kalman Filter (EKF) localization** for **TurtleBot3** in **ROS2 Humble**, utilizing Gazebo and RViz for simulation and visualization.
+
 
 ## **Features**  
 
