@@ -517,7 +517,7 @@ class EKF_LOCALIZATION(Node):
         Uses the x-y submatrix of self.final_covariance and self.mu for the estimated pose.
         """
         # Compute ellipse parameters from the final covariance
-        a, b, angle = self.compute_error_ellipse(self.final_covariance)
+        b, a, angle = self.compute_error_ellipse(self.final_covariance)
         center = (self.mu[0, 0], self.mu[1, 0])
         ellipse_points = self.generate_ellipse_points(center, a, b, angle)
         
