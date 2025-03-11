@@ -55,6 +55,7 @@ To launch the **Gazebo world**, **EKF localization**, and **RViz**, run:
 ```bash
 ros2 launch ekf_localization ekf_localization.launch.py
 ```
+![Video Demo](Simulation.gif)
 
 ### **Launch Sequence:**  
 1. **Gazebo loads the TurtleBot3 world**  
