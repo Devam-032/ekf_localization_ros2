@@ -11,10 +11,13 @@ setup.py
 ekf_localization/__init__.py
 ekf_localization/ekf_localization.py
 ekf_localization/lidar_sub.py
+ekf_localization/map_reader.py
+ekf_localization/map_sub.py
 ekf_localization/odom_sub.py
 ekf_localization/pub.py
 ekf_localization/pubsub.py
 ekf_localization/sub.py
+ekf_localization/tp.py
 ekf_localization.egg-info/PKG-INFO
 ekf_localization.egg-info/SOURCES.txt
 ekf_localization.egg-info/dependency_links.txt

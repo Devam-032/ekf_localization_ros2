@@ -2,10 +2,10 @@
 import rclpy,math
 import numpy as np
 import rclpy.logging
-from  rclpy.node import Node
+from rclpy.node import Node
 import rclpy.time
 from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import PoseWithCovarianceStamped,PoseStamped
+from geometry_msgs.msg import PoseWithCovarianceStamped,PoseStamped,Point
 from gazebo_msgs.msg import ModelStates
 from nav_msgs.msg import Odometry,Path
 from tf_transformations import euler_from_quaternion,quaternion_from_euler
@@ -33,6 +33,7 @@ class EKF_LOCALIZATION(Node):
         self.sigma_alpha = 0.01  # This is to define the standard deviation in the angle measurement
         self.theta_prev = 0.0
         self.pose_pub = self.create_publisher(PoseWithCovarianceStamped,"/pose_with_cov_stamped",10)
+        self.ref_marker_pub = self.create_publisher(MarkerArray, '/reference_cylinder_markers', 10)
         self.final_covariance = 0
         self.reference_cylin = [
             [1.3014, -1.74091],
@@ -63,6 +64,8 @@ class EKF_LOCALIZATION(Node):
         self.real_robot_path.header.frame_id = "odom"
 
         self.marker_pub = self.create_publisher(MarkerArray, '/estimated_cylinder_markers', 10)
+        self.error_ellipse_pub = self.create_publisher(Marker, '/error_ellipse', 10)
+
 
     def laserCb(self,msg:LaserScan):
         """This Function filters the lidar scan data and then stores it in a class variable."""
@@ -300,12 +303,8 @@ class EKF_LOCALIZATION(Node):
     
                 # Here we use a dummy observation Jacobian for illustration.
                 H_t_mat = np.array([
-                    [(-self.paired_estim_diff[0, i] / self.paired_estimations[0, i]),
-                    (-self.paired_estim_diff[1, i] / self.paired_estimations[0, i]),
-                    0],
-                    [(self.paired_estim_diff[1, i] / (self.paired_estimations[0, i] ** 2)),
-                    (-self.paired_estim_diff[0, i] / (self.paired_estimations[0, i] ** 2)),
-                    -1]
+                    [(-self.paired_estim_diff[0, i] / self.paired_estimations[0, i]), (-self.paired_estim_diff[1, i] / self.paired_estimations[0, i]), 0],
+                    [(self.paired_estim_diff[1, i] / ((self.paired_estimations[0, i]) ** 2)), (-self.paired_estim_diff[0, i] / ((self.paired_estimations[0, i]) ** 2)), -1]
                 ])
 
     
@@ -442,6 +441,103 @@ class EKF_LOCALIZATION(Node):
         
         self.marker_pub.publish(marker_array)
 
+    def publish_reference_cylinder_markers(self):
+        marker_array = MarkerArray()
+        clock = Clock()
+        for i, ref in enumerate(self.reference_cylin):
+            marker = Marker()
+            marker.header.stamp = clock.now().to_msg()
+            marker.header.frame_id = "odom"
+            marker.ns = "reference_cylinders"
+            marker.id = i
+            marker.type = Marker.CUBE  # You can choose SPHERE or CUBE
+            marker.action = Marker.ADD
+            marker.pose.position.x = ref[0]
+            marker.pose.position.y = ref[1]
+            marker.pose.position.z = 0.1  # Slightly above the ground
+            marker.pose.orientation.x = 0.0
+            marker.pose.orientation.y = 0.0
+            marker.pose.orientation.z = 0.0
+            marker.pose.orientation.w = 1.0
+            marker.scale.x = 0.2
+            marker.scale.y = 0.2
+            marker.scale.z = 0.2
+            # Use a distinct color (e.g., blue) for reference cylinders
+            marker.color.r = 0.0
+            marker.color.g = 0.0
+            marker.color.b = 1.0
+            marker.color.a = 1.0
+            marker_array.markers.append(marker)
+        self.ref_marker_pub.publish(marker_array)
+
+    def compute_error_ellipse(self, cov):
+        """
+        Extract the 2x2 covariance submatrix for x and y (from the 3x3 covariance matrix)
+        and compute the ellipse parameters.
+        Returns semi-major axis (a), semi-minor axis (b) and orientation angle (in radians).
+        """
+        cov_2d = np.array([
+            [cov[0, 0], cov[0, 1]],
+            [cov[1, 0], cov[1, 1]]
+        ])
+        eigenvals, eigenvecs = np.linalg.eig(cov_2d)
+        sort_indices = eigenvals.argsort()[::-1]
+        eigenvals = eigenvals[sort_indices]
+        eigenvecs = eigenvecs[:, sort_indices]
+        a = math.sqrt(eigenvals[0])
+        b = math.sqrt(eigenvals[1])
+        angle = math.atan2(eigenvecs[1, 0], eigenvecs[0, 0])
+        return a, b, angle
+
+    def generate_ellipse_points(self, center, a, b, angle, num_points=36):
+        """
+        Generate a list of geometry_msgs/Point forming an ellipse.
+        'center' is a tuple (x, y) for the ellipse center.
+        'a' and 'b' are the semi-axes and 'angle' is the orientation.
+        """
+        points = []
+        for t in np.linspace(0, 2 * math.pi, num_points):
+            x = a * math.cos(t)
+            y = b * math.sin(t)
+            # Rotate the point by the ellipse angle
+            x_rot = x * math.cos(angle) - y * math.sin(angle)
+            y_rot = x * math.sin(angle) + y * math.cos(angle)
+            pt = Point()
+            pt.x = center[0] + x_rot
+            pt.y = center[1] + y_rot
+            pt.z = 0.2  # Adjust if needed
+            points.append(pt)
+        # Close the ellipse
+        points.append(points[0])
+        return points
+
+    def publish_error_ellipse(self):
+        """
+        Publishes the error ellipse as a visualization_msgs/Marker.
+        Uses the x-y submatrix of self.final_covariance and self.mu for the estimated pose.
+        """
+        # Compute ellipse parameters from the final covariance
+        a, b, angle = self.compute_error_ellipse(self.final_covariance)
+        center = (self.mu[0, 0], self.mu[1, 0])
+        ellipse_points = self.generate_ellipse_points(center, a, b, angle)
+        
+        marker = Marker()
+        marker.header.stamp = Clock().now().to_msg()
+        marker.header.frame_id = "odom"
+        marker.ns = "error_ellipse"
+        marker.id = 0
+        marker.type = Marker.LINE_STRIP
+        marker.action = Marker.ADD
+        marker.scale.x = 0.005  # Line thickness
+        # Set color to green
+        marker.color.r = 0.0
+        marker.color.g = 1.0
+        marker.color.b = 0.0
+        marker.color.a = 1.0
+        marker.points = ellipse_points
+        marker.lifetime.sec = 0  # Remains until updated
+        self.error_ellipse_pub.publish(marker)
+
 
     def run(self):
         # Execute the prediction step (using odometry data)
@@ -464,6 +560,8 @@ class EKF_LOCALIZATION(Node):
         self.publish_trajectory()
         self.publish_real_trajectory()
         self.publish_cylinder_markers()
+        self.publish_reference_cylinder_markers()
+        self.publish_error_ellipse()
 
 
 

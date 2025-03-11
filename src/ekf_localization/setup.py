@@ -32,6 +32,8 @@ setup(
             "lidar_sub = ekf_localization.lidar_sub:main",
             "odom_sub = ekf_localization.odom_sub:main",
             "localization = ekf_localization.ekf_localization:main",
+            "map_reader = ekf_localization.map_reader:main",
+            "map_sub = ekf_localization.map_sub:main",
         ],
     },
 )
