@@ -6,12 +6,11 @@ from rclpy.node import Node
 import rclpy.time
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import PoseWithCovarianceStamped,PoseStamped,Point
-from gazebo_msgs.msg import ModelStates
 from nav_msgs.msg import Odometry,Path
 from tf_transformations import euler_from_quaternion,quaternion_from_euler
 from rclpy.clock import Clock
 from visualization_msgs.msg import Marker, MarkerArray
-
+from std_msgs.msg import Float64MultiArray,Bool
 
 def normalize_angle(angle):
     return (angle + math.pi) % (2 * math.pi) - math.pi 
@@ -34,26 +33,30 @@ class EKF_LOCALIZATION(Node):
         self.theta_prev = 0.0
         self.pose_pub = self.create_publisher(PoseWithCovarianceStamped,"/pose_with_cov_stamped",10)
         self.ref_marker_pub = self.create_publisher(MarkerArray, '/reference_cylinder_markers', 10)
-        self.final_covariance = 0
-        self.reference_cylin = [
-            [1.3014, -1.74091],
-            [1.98771, 1.13637],
-            [-1.13443, -0.902541],
-            [-1.37644, 2.26725],
-            [3.5403, -1.8486],
-            [1.05571, 3.07389],
-            [3.58534, 2.92355],
-            [4.6648, 1.68058],
-            [4.81043, -2.61818],
-            [3.30091, -4.2055],
-            [0.414463, -4.33209],
-            [-1.32098, -3.92076],
-            [-2.85487, -2.88071],
-            [-3.23012, 0.1117],
-            [-3.15908, 3.68903],
-            [-0.413215, 3.60968],
-            [-1.80846, 0.902126]
-        ]
+        self.final_covariance = np.eye(3)
+        self.ref_flag_pub = self.create_publisher(Bool, '/ref_coords_ready', 10)
+        # self.reference_cylin = [
+        #     [1.3014, -1.74091],
+        #     [1.98771, 1.13637],
+        #     [-1.13443, -0.902541],
+        #     [-1.37644, 2.26725],
+        #     [3.5403, -1.8486],
+        #     [1.05571, 3.07389],
+        #     [3.58534, 2.92355],
+        #     [4.6648, 1.68058],
+        #     [4.81043, -2.61818],
+        #     [3.30091, -4.2055],
+        #     [0.414463, -4.33209],
+        #     [-1.32098, -3.92076],
+        #     [-2.85487, -2.88071],
+        #     [-3.23012, 0.1117],
+        #     [-3.15908, 3.68903],
+        #     [-0.413215, 3.60968],
+        #     [-1.80846, 0.902126]
+        # ]
+
+        self.reference_cylin=[]
+        self.ref_coords_received = False
 
         self.trajectory_pub = self.create_publisher(Path, '/robot_path', 10)
         self.robot_path = Path()
@@ -66,6 +69,29 @@ class EKF_LOCALIZATION(Node):
         self.marker_pub = self.create_publisher(MarkerArray, '/estimated_cylinder_markers', 10)
         self.error_ellipse_pub = self.create_publisher(Marker, '/error_ellipse', 10)
 
+        self.ref_coords_sub = self.create_subscription(Float64MultiArray,'/reference_coords',self.reference_coords_callback,10)
+
+    def reference_coords_callback(self, msg: Float64MultiArray):
+    # Check if we've already processed a message
+        if self.ref_coords_received:
+            return  # Do nothing if already received once
+        self.ref_coords_received = True
+
+        # Assume msg.data is a flat list: [x1, y1, x2, y2, ...]
+        data = msg.data
+        if len(data) % 2 != 0:
+            self.get_logger().error("Reference coordinates data length is not even!")
+            return
+        new_coords = []
+        for i in range(0, len(data), 2):
+            new_coords.append([data[i], data[i+1]])
+        self.reference_cylin = new_coords
+        self.get_logger().info(f"Updated reference coordinates: {self.reference_cylin}")
+
+        flag_msg = Bool()
+        flag_msg.data = True
+        self.ref_flag_pub.publish(flag_msg)
+        self.get_logger().info("Published reference flag on /ref_coords_ready")
 
     def laserCb(self,msg:LaserScan):
         """This Function filters the lidar scan data and then stores it in a class variable."""
@@ -245,7 +271,7 @@ class EKF_LOCALIZATION(Node):
             self.get_logger().error("z_estim and/or z_meas not computed.")
             return
         
-        tolerance = 0.1  # Use a reasonable tolerance for matching
+        tolerance = 0.15  # Use a reasonable tolerance for matching
         paired_meas_dist = []
         paired_meas_angle = []
         paired_estim_dist = []
@@ -570,7 +596,7 @@ def main(args=None):
     rclpy.init(args=args)
     node = EKF_LOCALIZATION()
     # Create a timer to call the run() method periodically (e.g., every 0.1 seconds)
-    timer_period = 1  # seconds
+    timer_period = .5  # seconds
     node.create_timer(timer_period, node.run)
     rclpy.spin(node)
     node.destroy_node()

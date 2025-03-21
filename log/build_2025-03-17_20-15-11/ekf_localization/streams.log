@@ -1,0 +1,24 @@
+[0.523s] Invoking command in '/home/devam/FYP_ROS2/build/ekf_localization': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_localization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/devam/FYP_ROS2/build/ekf_localization/build --no-deps symlink_data
+[0.723s] running develop
+[0.855s] running egg_info
+[0.862s] writing ekf_localization.egg-info/PKG-INFO
+[0.862s] writing dependency_links to ekf_localization.egg-info/dependency_links.txt
+[0.862s] writing entry points to ekf_localization.egg-info/entry_points.txt
+[0.862s] writing requirements to ekf_localization.egg-info/requires.txt
+[0.863s] writing top-level names to ekf_localization.egg-info/top_level.txt
+[0.879s] reading manifest file 'ekf_localization.egg-info/SOURCES.txt'
+[0.879s] writing manifest file 'ekf_localization.egg-info/SOURCES.txt'
+[0.887s] running build_ext
+[0.887s] Creating /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf-localization.egg-link (link to .)
+[0.888s] Installing lidar_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[0.888s] Installing localization script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[0.888s] Installing map_reader script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[0.888s] Installing map_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[0.888s] Installing odom_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[0.888s] Installing test_pub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[0.888s] Installing test_pubsub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[0.888s] Installing test_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+[0.888s] 
+[0.888s] Installed /home/devam/FYP_ROS2/build/ekf_localization
+[0.888s] running symlink_data
+[0.910s] Invoked command in '/home/devam/FYP_ROS2/build/ekf_localization' returned '0': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_localization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/devam/FYP_ROS2/build/ekf_localization/build --no-deps symlink_data

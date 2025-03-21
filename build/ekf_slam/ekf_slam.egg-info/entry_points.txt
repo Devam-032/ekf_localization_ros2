@@ -1,0 +1,2 @@
+[console_scripts]
+ekf_slam = ekf_slam.ekf_slam:main

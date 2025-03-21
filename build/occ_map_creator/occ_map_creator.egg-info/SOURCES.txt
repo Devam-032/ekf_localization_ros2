@@ -1,0 +1,11 @@
+package.xml
+setup.cfg
+setup.py
+occ_map_creator/__init__.py
+occ_map_creator.egg-info/PKG-INFO
+occ_map_creator.egg-info/SOURCES.txt
+occ_map_creator.egg-info/dependency_links.txt
+occ_map_creator.egg-info/requires.txt
+occ_map_creator.egg-info/top_level.txt
+occ_map_creator.egg-info/zip-safe
+resource/occ_map_creator
