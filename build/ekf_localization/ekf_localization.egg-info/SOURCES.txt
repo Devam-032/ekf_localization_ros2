@@ -13,6 +13,7 @@ ekf_localization/ekf_localization.py
 ekf_localization/lidar_sub.py
 ekf_localization/map_reader.py
 ekf_localization/map_sub.py
+ekf_localization/map_vis_transform.py
 ekf_localization/odom_sub.py
 ekf_localization/pub.py
 ekf_localization/pubsub.py

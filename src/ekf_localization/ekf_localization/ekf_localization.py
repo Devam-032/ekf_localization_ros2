@@ -160,9 +160,9 @@ class EKF_LOCALIZATION(Node):
         alpha2 = 0.01
         alpha3 = 0.05
         alpha4 = 0.01
-        self.rot1_variance = alpha1 * abs(self.delta_rot1) + alpha2 * abs(self.delta_trans)
-        self.trans_variance = alpha3 * abs(self.delta_trans) + alpha4 * (abs(self.delta_rot1) + abs(self.delta_rot2))
-        self.rot2_variance = alpha1 * abs(self.delta_rot2) + alpha2 * abs(self.delta_trans)
+        self.rot1_variance = alpha1 * pow((self.delta_rot1),2) + alpha2 * pow((self.delta_trans),2)
+        self.trans_variance = alpha3 * pow((self.delta_trans),2) + alpha4 * (pow((self.delta_rot1),2) + pow((self.delta_rot2),2))
+        self.rot2_variance = alpha1 * pow((self.delta_rot2),2) + alpha2 * pow((self.delta_trans),2)
         control_covariance = np.diag([self.rot1_variance, self.trans_variance, self.rot2_variance]) #M_t matrix
 
         self.covariance = np.dot(self.G_t, np.dot(self.final_covariance, self.G_t.T)) + np.dot(self.V, np.dot(control_covariance, self.V.T))
@@ -267,7 +267,7 @@ class EKF_LOCALIZATION(Node):
         Note: z_meas has shape (2, N_meas) and z_estim has shape (2, N_estim).
         The number of detected cylinders is given by z_meas.shape[1].
         """
-        if not hasattr(self, 'z_estim') or not hasattr(self, 'z_meas'):
+        if not hasattr(self, 'z_estim') and not hasattr(self, 'z_meas'):
             self.get_logger().error("z_estim and/or z_meas not computed.")
             return
         
@@ -592,7 +592,6 @@ class EKF_LOCALIZATION(Node):
 
 
 def main(args=None):
-    import rclpy
     rclpy.init(args=args)
     node = EKF_LOCALIZATION()
     # Create a timer to call the run() method periodically (e.g., every 0.1 seconds)

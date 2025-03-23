@@ -2,12 +2,13 @@
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import OccupancyGrid
-from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import Quaternion, TransformStamped
 import yaml
 import cv2
 import numpy as np
 import os
 import math
+import tf2_ros
 
 class StaticMapServer(Node):
     def __init__(self, yaml_file):
@@ -23,6 +24,11 @@ class StaticMapServer(Node):
         self.yaml_file = yaml_file
         self.get_logger().info("Static Map Server starting. Loading map from: " + yaml_file)
         self.load_map()
+
+        # Setup static transform broadcaster to publish the identity transform
+        # between "map" (parent) and "odom" (child) so that they overlap initially.
+        self.static_broadcaster = tf2_ros.StaticTransformBroadcaster(self)
+        self.publish_static_transform()
 
     def load_map(self):
         # Load YAML file
@@ -71,7 +77,10 @@ class StaticMapServer(Node):
         msg = OccupancyGrid()
         current_time = self.get_clock().now().to_msg()
         msg.header.stamp = current_time
+        
+        # The occupancy grid is defined in the "map" frame.
         msg.header.frame_id = "map"
+        
         msg.info.map_load_time = current_time
         msg.info.resolution = self.resolution
         msg.info.width = self.width
@@ -90,11 +99,34 @@ class StaticMapServer(Node):
         
         msg.data = self.convert_to_occupancy_grid()
         self.publisher_.publish(msg)
-        self.get_logger().info("Published occupancy grid map.")
+        self.get_logger().info("Published occupancy grid map in 'map' frame.")
+
+    def publish_static_transform(self):
+        # Create a TransformStamped message for the static transform
+        t = TransformStamped()
+        current_time = self.get_clock().now().to_msg()
+        t.header.stamp = current_time
+        t.header.frame_id = "map"  # Parent frame
+        t.child_frame_id = "odom"  # Child frame
+        
+        # Set zero translation so that odom overlaps map
+        t.transform.translation.x = 0.0
+        t.transform.translation.y = 0.0
+        t.transform.translation.z = 0.0
+
+        # Set identity rotation (no rotation difference)
+        t.transform.rotation.x = 0.0
+        t.transform.rotation.y = 0.0
+        t.transform.rotation.z = 0.0
+        t.transform.rotation.w = 1.0
+        
+        # Publish the static transform
+        self.static_broadcaster.sendTransform(t)
+        self.get_logger().info("Published static identity transform from 'map' (parent) to 'odom' (child).")
 
 def main(args=None):
     rclpy.init(args=args)
-    # Update this with the absolute or relative path to your map.yaml file.
+    # Update the path to your map.yaml file as needed.
     yaml_file = '/home/devam/FYP_ROS2/src/ekf_localization/maps/map.yaml'
     node = StaticMapServer(yaml_file)
     rclpy.spin(node)
