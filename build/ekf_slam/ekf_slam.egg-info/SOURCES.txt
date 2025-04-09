@@ -3,6 +3,10 @@ setup.cfg
 setup.py
 ekf_slam/__init__.py
 ekf_slam/ekf_slam.py
+ekf_slam/ekf_slam_new_approach.py
+ekf_slam/ekf_slam_one_more_approach.py
+ekf_slam/test_cylin_pairs.py
+ekf_slam/test_sub_mat_formn.py
 ekf_slam.egg-info/PKG-INFO
 ekf_slam.egg-info/SOURCES.txt
 ekf_slam.egg-info/dependency_links.txt

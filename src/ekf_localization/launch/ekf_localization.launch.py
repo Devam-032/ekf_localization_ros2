@@ -21,7 +21,7 @@ def generate_launch_description():
     # Include the TurtleBot3 empty world launch file (this will start Gazebo)
     empty_world_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(tb3_gazebo_dir, 'launch', 'empty_world.launch.py')
+            os.path.join(tb3_gazebo_dir, 'launch', 'fyp_world.launch.py')
         )
     )
     

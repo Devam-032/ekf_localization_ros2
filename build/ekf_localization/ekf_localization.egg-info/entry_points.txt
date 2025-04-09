@@ -1,4 +1,5 @@
 [console_scripts]
+ekf_vyom = ekf_localization.ekf_loc_vyom:main
 lidar_sub = ekf_localization.lidar_sub:main
 localization = ekf_localization.ekf_localization:main
 map_reader = ekf_localization.map_reader:main

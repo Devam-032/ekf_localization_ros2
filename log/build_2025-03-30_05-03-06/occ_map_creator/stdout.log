@@ -1,0 +1,13 @@
+running develop
+running egg_info
+writing occ_map_creator.egg-info/PKG-INFO
+writing dependency_links to occ_map_creator.egg-info/dependency_links.txt
+writing requirements to occ_map_creator.egg-info/requires.txt
+writing top-level names to occ_map_creator.egg-info/top_level.txt
+reading manifest file 'occ_map_creator.egg-info/SOURCES.txt'
+writing manifest file 'occ_map_creator.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages/occ-map-creator.egg-link (link to .)
+
+Installed /home/devam/FYP_ROS2/build/occ_map_creator
+running symlink_data

@@ -9,6 +9,7 @@ setup.py
 ../../build/ekf_localization/ekf_localization.egg-info/top_level.txt
 ../../build/ekf_localization/ekf_localization.egg-info/zip-safe
 ekf_localization/__init__.py
+ekf_localization/ekf_loc_vyom.py
 ekf_localization/ekf_localization.py
 ekf_localization/lidar_sub.py
 ekf_localization/map_reader.py

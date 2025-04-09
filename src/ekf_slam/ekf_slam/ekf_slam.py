@@ -8,7 +8,9 @@ from geometry_msgs.msg import PoseWithCovarianceStamped
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import LaserScan
 from tf_transformations import euler_from_quaternion,quaternion_from_euler
-from ekf_localization.ekf_localization import normalize_angle
+
+def normalize_angle(angle):
+    return (angle + math.pi) % (2 * math.pi) - math.pi
 
 class EKF_SLAM(Node):
 
@@ -25,7 +27,9 @@ class EKF_SLAM(Node):
         self.mu_bar = np.zeros((3,1))
         self.total_landmarks = 0
         self.final_covariance = np.zeros((3,3))
-        
+        self.mu = np.zeros((3,1)) 
+        self.sigma_r = 0.1 # This is to define standard deviation in the distance measurement
+        self.sigma_alpha = 0.01  # This is to define the standard deviation in the angle measurement
 
     def laserCB(self,msg:LaserScan):
         """This functioon serves as the entry point to the slam implementation, as well as subscribes to the lidar data."""
@@ -92,9 +96,19 @@ class EKF_SLAM(Node):
         self.rot1_variance = alpha1 * pow((self.delta_rot1),2) + alpha2 * pow((self.delta_trans),2)
         self.trans_variance = alpha3 * pow((self.delta_trans),2) + alpha4 * (pow((self.delta_rot1),2) + pow((self.delta_rot2),2))
         self.rot2_variance = alpha1 * pow((self.delta_rot2),2) + alpha2 * pow((self.delta_trans),2)
-        control_covariance = np.diag([self.rot1_variance, self.trans_variance, self.rot2_variance]) #M_t matrix
+        Identity_mat = np.eye(3+2*self.total_landmarks)
+        noise = np.diag([self.rot1_variance, self.trans_variance, self.rot2_variance]) #M_t matrix
+        R_t = np.dot(self.V_t, np.dot(noise, self.V_t.T))
+        self.noise_cov = np.dot(Identity_mat.T,np.dot(R_t,Identity_mat))
 
-        self.covariance_bar = np.dot(self.G_t, np.dot(self.final_covariance, self.G_t.T)) + np.dot(self.V_t, np.dot(control_covariance, self.V_t.T))
+        #print("G_t shape:", self.G_t.shape)
+        #print("final_covariance shape:", self.final_covariance.shape)
+        #print("G_t.T shape:", self.G_t.T.shape)
+        #print("V_t shape:", self.V_t.shape)
+        #print("noise shape:", noise.shape)
+        #print("V_t.T shape:", self.V_t.T.shape)
+
+        self.covariance_bar = np.dot(self.G_t, np.dot(self.final_covariance, self.G_t.T)) + self.noise_cov
         
         _,self.size = np.shape(self.covariance_bar)
 
@@ -149,7 +163,7 @@ class EKF_SLAM(Node):
                 # Convert ray index to angle (assuming a fixed angular resolution, e.g., 1° = 0.01745 rad)
                 approx_ang = normalize_angle(avg_index * 0.01745)
                 self.approx_angular_position.append(approx_ang)
-                # Optionally add an offset (here +0.25 as in your code)
+                # Optionally add an offset equal to the radious of the cylinder (here +0.25 as in your code)
                 self.approx_linear_distance.append(avg_depth + 0.25)
                 # Reset for the next cylinder detection
                 cylin_active = False
@@ -158,40 +172,203 @@ class EKF_SLAM(Node):
                 sum_depth = 0.0
             i += 1
         
-        num_meas = len(self.approx_linear_distance)
-        self.get_logger().info(f"Number of cylinder measurements: {num_meas}")
-        self.total_landmarks = num_meas
-        self.final_covariance = np.eye(3+2*self.total_landmarks)
-        self.final_covariance[:self.size,:self.size] = self.covariance_bar
-        self.final_covariance[self.size:,self.size:] *= 10
+        self.num_meas = len(self.approx_linear_distance)
+        self.z_curr = np.vstack((self.approx_linear_distance,self.approx_angular_position)) #measurement matrix for the current observation
+#        self.get_logger().info(f"Number of cylinder measurements: {self.num_meas}")
 
-    def robot_pose_publisher(self):
-        clock = Clock()
-        pose_msg = PoseWithCovarianceStamped()
-        pose_msg.header.stamp = clock.now().to_msg()
+    def z_mat_from_previous_state(self):
+        """Calculates the z_matrix based upon the previous state matrix and current predicted pose"""
+        i = 0
+        meas_dist_list = []
+        meas_ang_list = []
+        diff_X_list = []
+        diff_Y_list = []
+        self.index = 3+2*self.total_landmarks
+        #print("Index limit:", index)
+        while(i<(self.index-3)/2):
+            x_land_curr = self.mu_bar[3+2*i][0]
+            y_land_curr = self.mu_bar[4+2*i][0]
+            x_diff = self.x_predicted - x_land_curr
+            y_diff = self.y_predicted - y_land_curr
+            dist = math.sqrt(math.pow((x_diff),2) + math.pow((y_diff),2))
+            theta = math.atan2(y_diff,x_diff)
+            meas_dist_list.append(dist)
+            meas_ang_list.append(theta)
+            diff_X_list.append(x_diff)
+            diff_Y_list.append(y_diff)
+            i+=1 #ek bhul
 
-        pose_msg.header.frame_id = "odom"  # Use the appropriate frame of reference
+        self.z_prev = np.vstack((meas_dist_list,meas_ang_list))
+        self.diff_estim = np.vstack((diff_X_list,diff_Y_list))
 
-        # Setting the pose based on the mean (mu)
-        pose_msg.pose.pose.position.x = self.mu_bar[0, 0]
-        pose_msg.pose.pose.position.y = self.mu_bar[1, 0]
-        pose_msg.pose.pose.position.z = 0.0  # Assume planar navigation
+    def cylin_pairing(self):
+        """Pairing of the cylinders based on the distance tolerance"""
+        
+        tolerance = 0.2
+        self.total_meas = [False]*self.num_meas
+        self.left_unmatched_from_prev = [True]*self.total_landmarks
+        self.z_curr_updated = []
+        self.indices = []
 
-        # Convert orientation from Euler to quaternion
-        quat = quaternion_from_euler(0, 0, self.mu_bar[2, 0])
-        pose_msg.pose.pose.orientation.x = quat[0]
-        pose_msg.pose.pose.orientation.y = quat[1]
-        pose_msg.pose.pose.orientation.z = quat[2]
-        pose_msg.pose.pose.orientation.w = quat[3]
+        paired_meas_dist = []
+        paired_meas_angle = []
+        paired_estim_dist = []
+        paired_estim_angle = []
+        paired_estim_diff_x = []
+        paired_estim_diff_y = []
 
-        # Fill in the covariance (flattened row-major order)
-        covariance_flat = self.final_covariance.flatten()
-        pose_msg.pose.covariance = [float(covariance_flat[i]) if i < len(covariance_flat) else 0.0 for i in range(36)]
-
+        if self.z_prev.shape[1] == 0:
+            return  # or handle the case appropriately
 
 
-        # Publish the message
-        self.position_pub.publish(pose_msg)
+        for i in range(self.z_prev.shape[1]):
+            for j in range(self.z_curr.shape[1]):
+                if (abs(self.z_prev[0, i] - self.z_curr[0, j]) < 10):
+                    self.total_meas[j] = True
+                    self.left_unmatched_from_prev[i] = False
+                    self.z_curr_updated.append(self.z_curr[:,j])
+                    paired_meas_dist.append(self.z_curr[0, j])
+                    paired_meas_angle.append(self.z_curr[1, j])
+                    paired_estim_dist.append(self.z_prev[0, i])
+                    paired_estim_angle.append(self.z_prev[1, i])
+                    paired_estim_diff_x.append(self.diff_estim[0, i])
+                    paired_estim_diff_y.append(self.diff_estim[1, i])
+                    # print("Paired measurements:", paired_meas_dist)
+                    # print("Paired estimations:", paired_estim_dist)
+                    break
+            if not self.left_unmatched_from_prev[i]:
+                self.indices.append(i)
+                
+        
+        if paired_meas_dist and paired_meas_angle:
+            self.paired_measurements = np.vstack((paired_meas_dist, paired_meas_angle))
+        else:
+            self.paired_measurements = np.array([])
+        
+        if paired_estim_dist and paired_estim_angle:
+            self.paired_estimations = np.vstack((paired_estim_dist, paired_estim_angle))
+        else:
+            self.paired_estimations = np.array([])
+        
+        if paired_estim_diff_x and paired_estim_diff_y:
+            self.paired_estim_diff = np.vstack((paired_estim_diff_x, paired_estim_diff_y))
+        else:
+            self.paired_estim_diff = np.array([])
+        #self.get_logger().info(f"Paired measurements: {self.paired_measurements}, Paired estimations: {self.paired_estimations}")
+
+    def z_to_states_for_new_cylin(self):
+
+        state_mat = np.empty((2,1))
+
+        self.check_flag = 1
+        for i in range(len(self.total_meas)):
+            if not self.total_meas[i]:
+                print(self.total_meas[i])
+                x_new = self.x_predicted + (self.z_curr[0,i]*math.cos(self.z_curr[1,i]))
+                y_new = self.y_predicted + (self.z_curr[0,i]*math.sin(self.z_curr[1,i]))
+                self.check_flag = 0
+                state_mat = np.vstack((state_mat, x_new,y_new))
+                #self.get_logger().info(f"New cylinder detected at x: {x_new}, y: {y_new}")
+
+        self.mu_new_cylin = state_mat
+
+    def correction_step(self):
+        """This function performs the correction step"""
+        if self.z_prev.shape[1] == 0:
+            return  # or handle the case appropriately
+        dime = 3+2*self.total_landmarks
+        H_t_mat = np.zeros((2, 3))
+        self.cov_sub_mat = np.eye((self.index))
+        self.cov_sub_mat[:3,:3] = (self.covariance_bar[:3,:3])
+        self.mu = self.mu_bar
+        self.mu_sub_mat = np.zeros((self.index, 1))
+        self.mu_sub_mat[:3,0] = self.mu[:3,0]
+        
+        self.final_covariance = self.covariance_bar
+        self.mu = self.mu_bar
+        
+        
+        
+
+        for i in range(len(self.indices)):
+            cylinder_original_placeholder = self.indices[i]
+            self.cov_sub_mat[3+2*i:5+2*i,3+2*i:5+2*i] = self.final_covariance[3+2*cylinder_original_placeholder:5+2*cylinder_original_placeholder,3+2*cylinder_original_placeholder:5+2*cylinder_original_placeholder]
+            self.mu_sub_mat[i:i+2,0] = self.mu_bar[cylinder_original_placeholder:cylinder_original_placeholder+2,0]
+
+        for i in range(len(self.indices)):
+            #Have to make changes to the cylin_pairing function to store the paired estim diff as well similar to the localization code.
+            meas_dist = self.paired_measurements[0, i]
+            meas_ang = self.paired_measurements[1, i]
+
+            z_matrix = np.array([[meas_dist], [meas_ang]])
+            h_matrix = np.array([[self.paired_estimations[0, i]], [self.paired_estimations[1, i]]])
+
+            H_t_mat[:2, :3] = np.array([
+                    [(-self.paired_estim_diff[0, i] / self.paired_estimations[0, i]),
+                     (-self.paired_estim_diff[1, i] / self.paired_estimations[0, i]), 0],
+                    [(self.paired_estim_diff[1, i] / (self.paired_estimations[0, i] ** 2)),
+                     (-self.paired_estim_diff[0, i] / (self.paired_estimations[0, i] ** 2)), -1]
+                ])
+            
+            H_obs = np.array(-H_t_mat[:2, :2])
+
+            H_t_mat = np.hstack((H_t_mat, H_obs))
+
+            q_matrix = np.array([
+                    [self.sigma_r**2, 0],
+                    [0, self.sigma_alpha**2]
+                ])
+            
+            S = np.dot(H_t_mat, np.dot(self.cov_sub_mat[:5+2*i,:5+2*i], H_t_mat.T)) + q_matrix
+            k_gain = np.dot(self.cov_sub_mat[:5+2*i,:5+2*i], np.dot(H_t_mat.T, np.linalg.inv(S)))
+
+            Innovation_matrix = np.array([
+                    [z_matrix[0, 0] - h_matrix[0, 0]],
+                    [normalize_angle(z_matrix[1, 0] - h_matrix[1, 0])]
+                ])
+            update = np.dot(k_gain, Innovation_matrix).squeeze()  # or .flatten()
+            self.mu_sub_mat[:5+2*i, 0] = self.mu_sub_mat[:5+2*i, 0] + update
+            Identity = np.eye(5+2*i)
+            self.cov_sub_mat[:5+2*i,:5+2*i] = np.dot((Identity - np.dot(k_gain, H_t_mat)), self.cov_sub_mat[:5+2*i,:5+2*i])
+            
+        self.mu[:3,0] = self.mu_bar[:3,0]
+        self.final_covariance[:3,:3] = self.cov_sub_mat[:3,:3]
+
+        for i in range(len(self.indices)):
+            self.final_covariance[
+                3 + 2 * self.indices[i] : 5 + 2 * self.indices[i],
+                3 + 2 * self.indices[i] : 5 + 2 * self.indices[i]
+            ]         = self.cov_sub_mat[3+2*i:5+2*i,3+2*i:5+2*i]
+
+            self.mu[3+2*self.indices[i]:5+2*self.indices[i],0] = self.mu_sub_mat[3+2*i:5+2*i,0]
+
+        self.mu_bar = self.mu
+        self.x_prev = self.x
+        self.y_prev = self.y
+        self.theta_prev = self.theta
+
+        
+
+
+    def add_new_cylin(self):
+
+        if self.check_flag == 1:
+            return #no new cylins observed
+
+        for i in range(len(self.total_meas)):
+            if not self.total_meas[i]:
+                self.total_landmarks+=1
+
+        self.mu = np.vstack((self.mu,self.mu_new_cylin))
+        final_cov = (np.eye(3+2*self.total_landmarks))*100
+        final_cov[:(np.shape(self.final_covariance)[0]),:(np.shape(self.final_covariance)[0])] = self.final_covariance
+
+        self.final_covariance = final_cov
+        self.mu_bar = self.mu
+        # self.get_logger().info(f"Covariance = {self.final_covariance}")
+        # self.get_logger().info(f"mu = {self.mu}")
+        self.get_logger().info(f"The shape of the {np.shape(self.final_covariance)}")
+
 
     def run(self):
         self.pose_predictor()
@@ -199,7 +376,11 @@ class EKF_SLAM(Node):
         self.control_cov_calc()
         self.predicted_covariance()
         self.observed_landmarks()
-        self.robot_pose_publisher()  
+        self.z_mat_from_previous_state()
+        self.cylin_pairing()
+        self.z_to_states_for_new_cylin()
+        self.correction_step()
+        self.add_new_cylin()
 
 def main(args = None):
     rclpy.init(args=args)
@@ -212,4 +393,3 @@ def main(args = None):
 
 if __name__ == "__main__":
     main()
-        

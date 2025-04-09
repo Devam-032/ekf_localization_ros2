@@ -270,8 +270,8 @@ class EKF_LOCALIZATION(Node):
         if not hasattr(self, 'z_estim') and not hasattr(self, 'z_meas'):
             self.get_logger().error("z_estim and/or z_meas not computed.")
             return
-        
-        tolerance = 0.15  # Use a reasonable tolerance for matching
+        """Test the new tolerance""" 
+        tolerance = 0.05    # Use a reasonable tolerance for matching
         paired_meas_dist = []
         paired_meas_angle = []
         paired_estim_dist = []
@@ -347,9 +347,12 @@ class EKF_LOCALIZATION(Node):
                     [normalize_angle(z_matrix[1, 0] - h_matrix[1, 0])]
                 ])
     
-                self.mu = self.mu_bar + np.dot(k_gain, Innovation_matrix)
+                self.mu_bar = self.mu_bar + np.dot(k_gain, Innovation_matrix)
                 Identity = np.eye(3)
-                self.final_covariance = np.dot((Identity - np.dot(k_gain, H_t_mat)), self.covariance)
+                self.covariance = np.dot((Identity - np.dot(k_gain, H_t_mat)), self.covariance)
+
+        self.mu = self.mu_bar
+        self.final_covariance = self.covariance
     
         self.obs_bot_position = np.array([
             [self.x],

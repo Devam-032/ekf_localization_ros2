@@ -35,6 +35,7 @@ setup(
             "map_reader = ekf_localization.map_reader:main",
             "map_sub = ekf_localization.map_sub:main",
             "map_rot = ekf_localization.map_vis_transform:main",
+            "ekf_vyom = ekf_localization.ekf_loc_vyom:main",
         ],
     },
 )
