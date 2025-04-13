@@ -62,7 +62,11 @@ To launch the **Gazebo world**, **EKF localization/EKF-SLAM nodes**, and **RViz*
 ros2 launch ekf_localization ekf_localization.launch.py
 ```
 
-> *Note: For running EKF-SLAM, you can execute the corresponding script inside the `ekf_slam/ekf_slam/` directory. It uses the same simulation world as localization.*
+> *Note: For running EKF-SLAM, you can execute the corresponding launch file:*
+
+```bash
+ros2 launch ekf_slam ekf_slam.launch.py
+```
 
 ![Video Demo](Simulation.gif)
 
