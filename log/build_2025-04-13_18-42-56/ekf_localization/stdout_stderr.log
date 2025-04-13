@@ -1,0 +1,69 @@
+running develop
+Removing /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf-localization.egg-link (link to .)
+running egg_info
+writing ../../build/ekf_localization/ekf_localization.egg-info/PKG-INFO
+writing dependency_links to ../../build/ekf_localization/ekf_localization.egg-info/dependency_links.txt
+writing entry points to ../../build/ekf_localization/ekf_localization.egg-info/entry_points.txt
+writing requirements to ../../build/ekf_localization/ekf_localization.egg-info/requires.txt
+writing top-level names to ../../build/ekf_localization/ekf_localization.egg-info/top_level.txt
+reading manifest file '../../build/ekf_localization/ekf_localization.egg-info/SOURCES.txt'
+writing manifest file '../../build/ekf_localization/ekf_localization.egg-info/SOURCES.txt'
+running build
+running build_py
+copying ekf_localization/map_sub.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+copying ekf_localization/pub.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+copying ekf_localization/lidar_sub.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+copying ekf_localization/sub.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+copying ekf_localization/__init__.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+copying ekf_localization/tp.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+copying ekf_localization/pubsub.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+copying ekf_localization/ekf_localization.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+copying ekf_localization/map_vis_transform.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+copying ekf_localization/map_reader.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+copying ekf_localization/odom_sub.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+copying ekf_localization/ekf_loc_vyom.py -> /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization
+running install
+running install_lib
+creating /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/map_sub.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/pub.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/lidar_sub.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/sub.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/__init__.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/tp.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/pubsub.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/ekf_localization.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/map_vis_transform.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/map_reader.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/odom_sub.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+copying /home/devam/FYP_ROS2/build/ekf_localization/build/lib/ekf_localization/ekf_loc_vyom.py -> /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/map_sub.py to map_sub.cpython-310.pyc
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/pub.py to pub.cpython-310.pyc
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/lidar_sub.py to lidar_sub.cpython-310.pyc
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/sub.py to sub.cpython-310.pyc
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/tp.py to tp.cpython-310.pyc
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/pubsub.py to pubsub.cpython-310.pyc
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/ekf_localization.py to ekf_localization.cpython-310.pyc
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/map_vis_transform.py to map_vis_transform.cpython-310.pyc
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/map_reader.py to map_reader.cpython-310.pyc
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/odom_sub.py to odom_sub.cpython-310.pyc
+byte-compiling /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization/ekf_loc_vyom.py to ekf_loc_vyom.cpython-310.pyc
+running install_data
+copying resource/ekf_localization -> /home/devam/FYP_ROS2/install/ekf_localization/share/ament_index/resource_index/packages
+copying package.xml -> /home/devam/FYP_ROS2/install/ekf_localization/share/ekf_localization
+copying launch/ekf_localization.launch.py -> /home/devam/FYP_ROS2/install/ekf_localization/share/ekf_localization/launch
+running install_egg_info
+Copying ../../build/ekf_localization/ekf_localization.egg-info to /home/devam/FYP_ROS2/install/ekf_localization/lib/python3.10/site-packages/ekf_localization-0.0.0-py3.10.egg-info
+running install_scripts
+Installing ekf_vyom script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing lidar_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing localization script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing map_reader script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing map_rot script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing map_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing odom_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing test_pub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing test_pubsub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+Installing test_sub script to /home/devam/FYP_ROS2/install/ekf_localization/lib/ekf_localization
+writing list of installed files to '/home/devam/FYP_ROS2/build/ekf_localization/install.log'

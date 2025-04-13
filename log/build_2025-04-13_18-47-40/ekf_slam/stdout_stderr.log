@@ -1,0 +1,32 @@
+running egg_info
+writing ../../build/ekf_slam/ekf_slam.egg-info/PKG-INFO
+writing dependency_links to ../../build/ekf_slam/ekf_slam.egg-info/dependency_links.txt
+writing entry points to ../../build/ekf_slam/ekf_slam.egg-info/entry_points.txt
+writing requirements to ../../build/ekf_slam/ekf_slam.egg-info/requires.txt
+writing top-level names to ../../build/ekf_slam/ekf_slam.egg-info/top_level.txt
+reading manifest file '../../build/ekf_slam/ekf_slam.egg-info/SOURCES.txt'
+writing manifest file '../../build/ekf_slam/ekf_slam.egg-info/SOURCES.txt'
+running build
+running build_py
+copying ekf_slam/difference_estim.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+copying ekf_slam/test_sub_mat_formn.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+copying ekf_slam/ekf_slam_v_w.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+copying ekf_slam/ekf_slam.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+copying ekf_slam/__init__.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+copying ekf_slam/test_cylin_pairs.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+copying ekf_slam/ekf_slam_new_approach.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+running install
+running install_lib
+running install_data
+copying resource/ekf_slam -> /home/devam/FYP_ROS2/install/ekf_slam/share/ament_index/resource_index/packages
+copying package.xml -> /home/devam/FYP_ROS2/install/ekf_slam/share/ekf_slam
+creating /home/devam/FYP_ROS2/install/ekf_slam/share/ekf_slam/launch
+copying launch/ekf_slam.launch.py -> /home/devam/FYP_ROS2/install/ekf_slam/share/ekf_slam/launch
+running install_egg_info
+removing '/home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../build/ekf_slam/ekf_slam.egg-info to /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam-0.0.0-py3.10.egg-info
+running install_scripts
+Installing ekf_slam script to /home/devam/FYP_ROS2/install/ekf_slam/lib/ekf_slam
+Installing ekf_slam_2 script to /home/devam/FYP_ROS2/install/ekf_slam/lib/ekf_slam
+Installing ekf_slam_3 script to /home/devam/FYP_ROS2/install/ekf_slam/lib/ekf_slam
+writing list of installed files to '/home/devam/FYP_ROS2/build/ekf_slam/install.log'

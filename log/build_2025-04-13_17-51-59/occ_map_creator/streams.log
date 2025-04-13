@@ -1,0 +1,31 @@
+[0.669s] Invoking command in '/home/devam/FYP_ROS2/build/occ_map_creator': PYTHONPATH=/home/devam/FYP_ROS2/build/occ_map_creator/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/devam/FYP_ROS2/build/occ_map_creator/build
+[0.842s] running develop
+[0.963s] Removing /home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages/occ-map-creator.egg-link (link to .)
+[0.982s] Invoked command in '/home/devam/FYP_ROS2/build/occ_map_creator' returned '0': PYTHONPATH=/home/devam/FYP_ROS2/build/occ_map_creator/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/devam/FYP_ROS2/build/occ_map_creator/build
+[0.983s] Invoking command in '/home/devam/FYP_ROS2/src/occ_map_creator': PYTHONPATH=/home/devam/FYP_ROS2/build/occ_map_creator/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/occ_map_creator build --build-base /home/devam/FYP_ROS2/build/occ_map_creator/build install --record /home/devam/FYP_ROS2/build/occ_map_creator/install.log --single-version-externally-managed install_data --force
+[1.121s] running egg_info
+[1.130s] writing ../../build/occ_map_creator/occ_map_creator.egg-info/PKG-INFO
+[1.130s] writing dependency_links to ../../build/occ_map_creator/occ_map_creator.egg-info/dependency_links.txt
+[1.131s] writing requirements to ../../build/occ_map_creator/occ_map_creator.egg-info/requires.txt
+[1.131s] writing top-level names to ../../build/occ_map_creator/occ_map_creator.egg-info/top_level.txt
+[1.149s] reading manifest file '../../build/occ_map_creator/occ_map_creator.egg-info/SOURCES.txt'
+[1.150s] writing manifest file '../../build/occ_map_creator/occ_map_creator.egg-info/SOURCES.txt'
+[1.150s] running build
+[1.151s] running build_py
+[1.151s] creating /home/devam/FYP_ROS2/build/occ_map_creator/build
+[1.151s] creating /home/devam/FYP_ROS2/build/occ_map_creator/build/lib
+[1.151s] creating /home/devam/FYP_ROS2/build/occ_map_creator/build/lib/occ_map_creator
+[1.151s] copying occ_map_creator/__init__.py -> /home/devam/FYP_ROS2/build/occ_map_creator/build/lib/occ_map_creator
+[1.151s] running install
+[1.153s] running install_lib
+[1.161s] creating /home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages/occ_map_creator
+[1.161s] copying /home/devam/FYP_ROS2/build/occ_map_creator/build/lib/occ_map_creator/__init__.py -> /home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages/occ_map_creator
+[1.162s] byte-compiling /home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages/occ_map_creator/__init__.py to __init__.cpython-310.pyc
+[1.162s] running install_data
+[1.162s] copying resource/occ_map_creator -> /home/devam/FYP_ROS2/install/occ_map_creator/share/ament_index/resource_index/packages
+[1.162s] copying package.xml -> /home/devam/FYP_ROS2/install/occ_map_creator/share/occ_map_creator
+[1.162s] running install_egg_info
+[1.172s] Copying ../../build/occ_map_creator/occ_map_creator.egg-info to /home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages/occ_map_creator-0.0.0-py3.10.egg-info
+[1.172s] running install_scripts
+[1.250s] writing list of installed files to '/home/devam/FYP_ROS2/build/occ_map_creator/install.log'
+[1.265s] Invoked command in '/home/devam/FYP_ROS2/src/occ_map_creator' returned '0': PYTHONPATH=/home/devam/FYP_ROS2/build/occ_map_creator/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/occ_map_creator build --build-base /home/devam/FYP_ROS2/build/occ_map_creator/build install --record /home/devam/FYP_ROS2/build/occ_map_creator/install.log --single-version-externally-managed install_data --force

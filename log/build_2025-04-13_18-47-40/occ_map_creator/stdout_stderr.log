@@ -1,0 +1,20 @@
+running egg_info
+writing ../../build/occ_map_creator/occ_map_creator.egg-info/PKG-INFO
+writing dependency_links to ../../build/occ_map_creator/occ_map_creator.egg-info/dependency_links.txt
+writing requirements to ../../build/occ_map_creator/occ_map_creator.egg-info/requires.txt
+writing top-level names to ../../build/occ_map_creator/occ_map_creator.egg-info/top_level.txt
+reading manifest file '../../build/occ_map_creator/occ_map_creator.egg-info/SOURCES.txt'
+writing manifest file '../../build/occ_map_creator/occ_map_creator.egg-info/SOURCES.txt'
+running build
+running build_py
+copying occ_map_creator/__init__.py -> /home/devam/FYP_ROS2/build/occ_map_creator/build/lib/occ_map_creator
+running install
+running install_lib
+running install_data
+copying resource/occ_map_creator -> /home/devam/FYP_ROS2/install/occ_map_creator/share/ament_index/resource_index/packages
+copying package.xml -> /home/devam/FYP_ROS2/install/occ_map_creator/share/occ_map_creator
+running install_egg_info
+removing '/home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages/occ_map_creator-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../build/occ_map_creator/occ_map_creator.egg-info to /home/devam/FYP_ROS2/install/occ_map_creator/lib/python3.10/site-packages/occ_map_creator-0.0.0-py3.10.egg-info
+running install_scripts
+writing list of installed files to '/home/devam/FYP_ROS2/build/occ_map_creator/install.log'

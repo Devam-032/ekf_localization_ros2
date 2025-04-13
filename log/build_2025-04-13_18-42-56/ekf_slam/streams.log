@@ -1,0 +1,50 @@
+[0.715s] Invoking command in '/home/devam/FYP_ROS2/build/ekf_slam': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_slam/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/devam/FYP_ROS2/build/ekf_slam/build
+[0.914s] running develop
+[1.055s] Removing /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf-slam.egg-link (link to .)
+[1.074s] Invoked command in '/home/devam/FYP_ROS2/build/ekf_slam' returned '0': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_slam/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/devam/FYP_ROS2/build/ekf_slam/build
+[1.075s] Invoking command in '/home/devam/FYP_ROS2/src/ekf_slam': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_slam/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/ekf_slam build --build-base /home/devam/FYP_ROS2/build/ekf_slam/build install --record /home/devam/FYP_ROS2/build/ekf_slam/install.log --single-version-externally-managed install_data --force
+[1.210s] running egg_info
+[1.218s] writing ../../build/ekf_slam/ekf_slam.egg-info/PKG-INFO
+[1.218s] writing dependency_links to ../../build/ekf_slam/ekf_slam.egg-info/dependency_links.txt
+[1.218s] writing entry points to ../../build/ekf_slam/ekf_slam.egg-info/entry_points.txt
+[1.218s] writing requirements to ../../build/ekf_slam/ekf_slam.egg-info/requires.txt
+[1.218s] writing top-level names to ../../build/ekf_slam/ekf_slam.egg-info/top_level.txt
+[1.236s] reading manifest file '../../build/ekf_slam/ekf_slam.egg-info/SOURCES.txt'
+[1.237s] writing manifest file '../../build/ekf_slam/ekf_slam.egg-info/SOURCES.txt'
+[1.237s] running build
+[1.237s] running build_py
+[1.237s] copying ekf_slam/difference_estim.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+[1.237s] copying ekf_slam/test_sub_mat_formn.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+[1.237s] copying ekf_slam/ekf_slam_v_w.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+[1.237s] copying ekf_slam/ekf_slam.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+[1.238s] copying ekf_slam/__init__.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+[1.238s] copying ekf_slam/test_cylin_pairs.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+[1.238s] copying ekf_slam/ekf_slam_new_approach.py -> /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam
+[1.238s] running install
+[1.240s] running install_lib
+[1.248s] creating /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam
+[1.248s] copying /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam/difference_estim.py -> /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam
+[1.249s] copying /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam/test_sub_mat_formn.py -> /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam
+[1.249s] copying /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam/ekf_slam_v_w.py -> /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam
+[1.249s] copying /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam/ekf_slam.py -> /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam
+[1.249s] copying /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam/__init__.py -> /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam
+[1.249s] copying /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam/test_cylin_pairs.py -> /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam
+[1.249s] copying /home/devam/FYP_ROS2/build/ekf_slam/build/lib/ekf_slam/ekf_slam_new_approach.py -> /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam
+[1.249s] byte-compiling /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam/difference_estim.py to difference_estim.cpython-310.pyc
+[1.249s] byte-compiling /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam/test_sub_mat_formn.py to test_sub_mat_formn.cpython-310.pyc
+[1.250s] byte-compiling /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam/ekf_slam_v_w.py to ekf_slam_v_w.cpython-310.pyc
+[1.251s] byte-compiling /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam/ekf_slam.py to ekf_slam.cpython-310.pyc
+[1.252s] byte-compiling /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam/__init__.py to __init__.cpython-310.pyc
+[1.253s] byte-compiling /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam/test_cylin_pairs.py to test_cylin_pairs.cpython-310.pyc
+[1.253s] byte-compiling /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam/ekf_slam_new_approach.py to ekf_slam_new_approach.cpython-310.pyc
+[1.255s] running install_data
+[1.255s] copying resource/ekf_slam -> /home/devam/FYP_ROS2/install/ekf_slam/share/ament_index/resource_index/packages
+[1.255s] copying package.xml -> /home/devam/FYP_ROS2/install/ekf_slam/share/ekf_slam
+[1.255s] running install_egg_info
+[1.264s] Copying ../../build/ekf_slam/ekf_slam.egg-info to /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf_slam-0.0.0-py3.10.egg-info
+[1.264s] running install_scripts
+[1.338s] Installing ekf_slam script to /home/devam/FYP_ROS2/install/ekf_slam/lib/ekf_slam
+[1.338s] Installing ekf_slam_2 script to /home/devam/FYP_ROS2/install/ekf_slam/lib/ekf_slam
+[1.338s] Installing ekf_slam_3 script to /home/devam/FYP_ROS2/install/ekf_slam/lib/ekf_slam
+[1.338s] writing list of installed files to '/home/devam/FYP_ROS2/build/ekf_slam/install.log'
+[1.351s] Invoked command in '/home/devam/FYP_ROS2/src/ekf_slam' returned '0': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_slam/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/ekf_slam build --build-base /home/devam/FYP_ROS2/build/ekf_slam/build install --record /home/devam/FYP_ROS2/build/ekf_slam/install.log --single-version-externally-managed install_data --force

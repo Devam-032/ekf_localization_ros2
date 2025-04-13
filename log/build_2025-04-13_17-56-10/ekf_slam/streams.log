@@ -1,0 +1,21 @@
+[0.656s] Invoking command in '/home/devam/FYP_ROS2/build/ekf_slam': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_slam/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/devam/FYP_ROS2/build/ekf_slam/build --no-deps symlink_data --force
+[0.829s] running develop
+[0.949s] running egg_info
+[0.957s] writing ekf_slam.egg-info/PKG-INFO
+[0.957s] writing dependency_links to ekf_slam.egg-info/dependency_links.txt
+[0.957s] writing entry points to ekf_slam.egg-info/entry_points.txt
+[0.958s] writing requirements to ekf_slam.egg-info/requires.txt
+[0.958s] writing top-level names to ekf_slam.egg-info/top_level.txt
+[0.975s] reading manifest file 'ekf_slam.egg-info/SOURCES.txt'
+[0.975s] writing manifest file 'ekf_slam.egg-info/SOURCES.txt'
+[0.984s] running build_ext
+[0.984s] Creating /home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages/ekf-slam.egg-link (link to .)
+[0.985s] Installing ekf_slam script to /home/devam/FYP_ROS2/install/ekf_slam/lib/ekf_slam
+[0.985s] Installing ekf_slam_2 script to /home/devam/FYP_ROS2/install/ekf_slam/lib/ekf_slam
+[0.985s] Installing ekf_slam_3 script to /home/devam/FYP_ROS2/install/ekf_slam/lib/ekf_slam
+[0.985s] 
+[0.985s] Installed /home/devam/FYP_ROS2/build/ekf_slam
+[0.985s] running symlink_data
+[0.985s] symbolically linking /home/devam/FYP_ROS2/build/ekf_slam/resource/ekf_slam -> /home/devam/FYP_ROS2/install/ekf_slam/share/ament_index/resource_index/packages
+[0.985s] symbolically linking /home/devam/FYP_ROS2/build/ekf_slam/package.xml -> /home/devam/FYP_ROS2/install/ekf_slam/share/ekf_slam
+[1.001s] Invoked command in '/home/devam/FYP_ROS2/build/ekf_slam' returned '0': PYTHONPATH=/home/devam/FYP_ROS2/build/ekf_slam/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/devam/FYP_ROS2/install/ekf_slam/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/devam/FYP_ROS2/build/ekf_slam/build --no-deps symlink_data --force

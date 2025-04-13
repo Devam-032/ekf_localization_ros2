@@ -4,6 +4,3 @@ source;share/ekf_localization/hook/pythonpath.sh
 source;share/ekf_localization/hook/ament_prefix_path.ps1
 source;share/ekf_localization/hook/ament_prefix_path.dsv
 source;share/ekf_localization/hook/ament_prefix_path.sh
-source;../../build/ekf_localization/share/ekf_localization/hook/pythonpath_develop.ps1
-source;../../build/ekf_localization/share/ekf_localization/hook/pythonpath_develop.dsv
-source;../../build/ekf_localization/share/ekf_localization/hook/pythonpath_develop.sh

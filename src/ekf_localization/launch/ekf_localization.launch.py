@@ -11,12 +11,8 @@ def generate_launch_description():
     tb3_gazebo_dir = get_package_share_directory('turtlebot3_gazebo')
     ekf_loc_dir = get_package_share_directory('ekf_localization')
     
-    # Determine the RViz configuration file: first try "ekf_localization.rviz", then "default.rviz"
-    rviz_config_path = os.path.join(ekf_loc_dir, 'rviz', 'ekf_localization.rviz')
-    if not os.path.exists(rviz_config_path):
-        rviz_config_path = os.path.join(ekf_loc_dir, 'rviz', 'default.rviz')
-        if not os.path.exists(rviz_config_path):
-            rviz_config_path = None
+    # Use the specified RViz configuration file location directly
+    rviz_config_path = '/home/devam/FYP_ROS2/src/ekf_localization/rviz/default.rviz'
 
     # Include the TurtleBot3 empty world launch file (this will start Gazebo)
     empty_world_launch = IncludeLaunchDescription(
@@ -25,9 +21,33 @@ def generate_launch_description():
         )
     )
     
-    # Delay the EKF localization node launch by 5 seconds
+    map_reader_node = TimerAction(
+        period=0.0,
+        actions=[
+            Node(
+                package='ekf_localization',
+                executable='map_reader',
+                name='ekf_localization_node',
+                output='screen'
+            )
+        ]
+    )
+
+    map_sub_node = TimerAction(
+        period=0.0,
+        actions=[
+            Node(
+                package='ekf_localization',
+                executable='map_sub',
+                name='ekf_localization_node',
+                output='screen'
+            )
+        ]
+    )
+
+    # Delay the EKF localization node launch by 7 seconds
     ekf_node = TimerAction(
-        period=5.0,
+        period=7.0,
         actions=[
             Node(
                 package='ekf_localization',
@@ -38,10 +58,10 @@ def generate_launch_description():
         ]
     )
     
-    # Delay the RViz launch by 5 seconds as well
+    # Delay the RViz launch by 7 seconds as well
     if rviz_config_path:
         rviz_node = TimerAction(
-            period=5.0,
+            period=7.0,
             actions=[
                 Node(
                     package='rviz2',
@@ -54,7 +74,7 @@ def generate_launch_description():
         )
     else:
         rviz_node = TimerAction(
-            period=5.0,
+            period=7.0,
             actions=[
                 Node(
                     package='rviz2',
@@ -67,6 +87,8 @@ def generate_launch_description():
     
     ld = LaunchDescription()
     ld.add_action(empty_world_launch)
+    ld.add_action(map_reader_node)
+    ld.add_action(map_sub_node)
     ld.add_action(ekf_node)
     ld.add_action(rviz_node)
     return ld
