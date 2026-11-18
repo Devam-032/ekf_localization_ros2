@@ -1,0 +1,11 @@
+# colcon build output
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+
+# Runtime logs
+*.log
