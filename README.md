@@ -124,6 +124,8 @@ Reproduce (writes `tools/ekf_eval/out/ekf-paths.csv` and an RViz screenshot):
 ./tools/ekf_eval/run.sh 300
 ```
 
+The run behind the table above is in [`results/ekf-paths.csv`](results/ekf-paths.csv) (`gt_*` = Gazebo true pose, `odom_*` = noisy odometry fed to the EKF, `ekf_*` = estimate; covariance in m²).
+
 CSV columns: `t, gt_x, gt_y, gt_yaw, odom_x, odom_y, odom_yaw, ekf_x, ekf_y, ekf_yaw, cov_xx, cov_yy, cov_xy`.
 
 Offline unit check of association + update (no simulator needed):
