@@ -29,11 +29,18 @@ class EKF_LOCALIZATION(Node):
         self.y_prev = 0.0
         self.theta = 0.0
         self.sigma_r = 0.1 # This is to define standard deviation in the distance measurement
-        self.sigma_alpha = 0.01  # This is to define the standard deviation in the angle measurement
+        self.sigma_alpha = 0.035  # Std. dev. of the bearing measurement (~2 deg; lidar resolution is 1 deg)
         self.theta_prev = 0.0
+        # Filtered state (x, y, theta); the robot starts at the origin
+        self.mu = np.zeros((3, 1))
+        # Data association gate: max range / bearing difference between a detected
+        # cylinder and a predicted landmark for them to be paired
+        self.gate_range = 0.4
+        self.gate_bearing = 0.25
         self.pose_pub = self.create_publisher(PoseWithCovarianceStamped,"/pose_with_cov_stamped",10)
         self.ref_marker_pub = self.create_publisher(MarkerArray, '/reference_cylinder_markers', 10)
-        self.final_covariance = np.eye(3)
+        # Start pose is known, so start with a small uncertainty
+        self.final_covariance = np.diag([0.01, 0.01, 0.01])
         self.ref_flag_pub = self.create_publisher(Bool, '/ref_coords_ready', 10)
         # self.reference_cylin = [
         #     [1.3014, -1.74091],
@@ -126,10 +133,15 @@ class EKF_LOCALIZATION(Node):
         self.delta_rot2 = normalize_angle(self.theta - self.theta_prev - self.delta_rot1)
 
     def pose_predictor(self):
-        """This step is to predict the pose of the robot using the odometry motion model."""
-        self.x_predicted = self.x_prev + self.delta_trans*math.cos(self.theta + self.delta_rot1)
-        self.y_predicted = self.y_prev + self.delta_trans*math.sin(self.theta + self.delta_rot1)
-        self.theta_predicted = normalize_angle(self.theta_prev + self.delta_rot1 + self.delta_rot2)
+        """This step is to predict the pose of the robot using the odometry motion model.
+
+        The odometry increments (rot1, trans, rot2) are applied to the previous *filtered*
+        estimate mu, so landmark corrections carry forward from step to step.
+        """
+        mu_x, mu_y, mu_theta = self.mu[0, 0], self.mu[1, 0], self.mu[2, 0]
+        self.x_predicted = mu_x + self.delta_trans*math.cos(mu_theta + self.delta_rot1)
+        self.y_predicted = mu_y + self.delta_trans*math.sin(mu_theta + self.delta_rot1)
+        self.theta_predicted = normalize_angle(mu_theta + self.delta_rot1 + self.delta_rot2)
 
 
         self.mu_bar = np.array([
@@ -140,17 +152,19 @@ class EKF_LOCALIZATION(Node):
 
     def state_covariance_calc(self):
         """This function serves as the calculation of state_covariance."""
+        heading = self.mu[2, 0] + self.delta_rot1   # linearise at the filtered heading
         self.G_t = np.array([
-            [1 , 0  , -self.delta_trans*math.sin(self.theta_prev+self.delta_rot1)],
-            [0 , 1 , self.delta_trans*math.cos(self.theta_prev+self.delta_rot1)],
+            [1 , 0  , -self.delta_trans*math.sin(heading)],
+            [0 , 1 , self.delta_trans*math.cos(heading)],
             [0 , 0, 1]
         ]) #W.R.T. STATES(POSITION,ORIENTATION)
-    
+
     def control_covariance_calc(self):
         """This function is used to obtain the covariance in the control signals given to the robot."""
+        heading = self.mu[2, 0] + self.delta_rot1
         self.V = np.array([
-            [-self.delta_trans*(math.sin(self.theta_prev+self.delta_rot1)) , math.cos(self.theta_prev + self.delta_rot1) , 0],
-            [self.delta_trans*math.cos(self.theta_prev + self.delta_rot1) , math.sin(self.theta_prev + self.delta_rot1) , 0],
+            [-self.delta_trans*math.sin(heading) , math.cos(heading) , 0],
+            [self.delta_trans*math.cos(heading) , math.sin(heading) , 0],
             [1 , 0 , 1]
         ]) #W.R.T. CONTROLS U=[DEL_R1,DEL_T,DEL_R2]
 
@@ -270,8 +284,6 @@ class EKF_LOCALIZATION(Node):
         if not hasattr(self, 'z_estim') and not hasattr(self, 'z_meas'):
             self.get_logger().error("z_estim and/or z_meas not computed.")
             return
-        """Test the new tolerance""" 
-        tolerance = 0.05    # Use a reasonable tolerance for matching
         paired_meas_dist = []
         paired_meas_angle = []
         paired_estim_dist = []
@@ -279,19 +291,32 @@ class EKF_LOCALIZATION(Node):
         paired_estim_diff_x = []
         paired_estim_diff_y = []
 
-        num_estim = self.z_estim.shape[1]
-        num_meas = self.z_meas.shape[1]
-        
-        for i in range(num_estim):
-            for j in range(num_meas):
-                if np.allclose(self.z_estim[:, i], self.z_meas[:, j], atol=tolerance):
-                    paired_meas_dist.append(self.z_meas[0, j])
-                    paired_meas_angle.append(self.z_meas[1, j])
-                    paired_estim_dist.append(self.z_estim[0, i])
-                    paired_estim_angle.append(self.z_estim[1, i])
-                    paired_estim_diff_x.append(self.diff_estim[0, i])
-                    paired_estim_diff_y.append(self.diff_estim[1, i])
-                    break
+        num_estim = self.z_estim.shape[1] if self.z_estim.size else 0
+        num_meas = self.z_meas.shape[1] if self.z_meas.size else 0
+
+        # Nearest-neighbour association: each detected cylinder is paired with the
+        # predicted landmark closest in (range, bearing), if it falls inside the gate.
+        # Each landmark is used at most once per scan.
+        used = set()
+        for j in range(num_meas):
+            best_i, best_d = None, 1.0
+            for i in range(num_estim):
+                if i in used:
+                    continue
+                d_range = (self.z_meas[0, j] - self.z_estim[0, i]) / self.gate_range
+                d_bearing = normalize_angle(self.z_meas[1, j] - self.z_estim[1, i]) / self.gate_bearing
+                d = d_range**2 + d_bearing**2
+                if d < best_d:
+                    best_i, best_d = i, d
+            if best_i is None:
+                continue
+            used.add(best_i)
+            paired_meas_dist.append(self.z_meas[0, j])
+            paired_meas_angle.append(self.z_meas[1, j])
+            paired_estim_dist.append(self.z_estim[0, best_i])
+            paired_estim_angle.append(self.z_estim[1, best_i])
+            paired_estim_diff_x.append(self.diff_estim[0, best_i])
+            paired_estim_diff_y.append(self.diff_estim[1, best_i])
         
         if paired_meas_dist and paired_meas_angle:
             self.paired_measurements = np.vstack((paired_meas_dist, paired_meas_angle))
@@ -312,44 +337,38 @@ class EKF_LOCALIZATION(Node):
         """
         Update the state estimate using the EKF measurement update.
         If no measurement pairs were found, the prediction is kept.
-        (Note: The Jacobian H_t_mat is set as a dummy 2x3 matrix here;
-         adjust as needed for your observation model.)
-        """
-        if self.paired_measurements.size == 0:
-            self.mu = self.mu_bar
-            self.final_covariance = self.covariance
-        else:
-            num_pairs = self.paired_measurements.shape[1]
-            for i in range(num_pairs):
-                meas_dist = self.paired_measurements[0, i]
-                meas_ang = self.paired_measurements[1, i]
-                z_matrix = np.array([[meas_dist], [meas_ang]])
-    
-                h_matrix = np.array([[self.paired_estimations[0, i]], [self.paired_estimations[1, i]]])
-    
-                # Here we use a dummy observation Jacobian for illustration.
-                H_t_mat = np.array([
-                    [(-self.paired_estim_diff[0, i] / self.paired_estimations[0, i]), (-self.paired_estim_diff[1, i] / self.paired_estimations[0, i]), 0],
-                    [(self.paired_estim_diff[1, i] / ((self.paired_estimations[0, i]) ** 2)), (-self.paired_estim_diff[0, i] / ((self.paired_estimations[0, i]) ** 2)), -1]
-                ])
 
-    
-                q_matrix = np.array([
-                    [self.sigma_r**2, 0],
-                    [0, self.sigma_alpha**2]
-                ])
-    
-                S = np.dot(H_t_mat, np.dot(self.covariance, H_t_mat.T)) + q_matrix
-                k_gain = np.dot(self.covariance, np.dot(H_t_mat.T, np.linalg.inv(S)))
-    
-                Innovation_matrix = np.array([
-                    [z_matrix[0, 0] - h_matrix[0, 0]],
-                    [normalize_angle(z_matrix[1, 0] - h_matrix[1, 0])]
-                ])
-    
-                self.mu_bar = self.mu_bar + np.dot(k_gain, Innovation_matrix)
-                Identity = np.eye(3)
-                self.covariance = np.dot((Identity - np.dot(k_gain, H_t_mat)), self.covariance)
+        All paired landmarks are fused in one batch update (stacked z, h, H, Q),
+        so every pair is linearised at the same predicted pose.
+        """
+        if self.paired_measurements.size != 0:
+            num_pairs = self.paired_measurements.shape[1]
+            z_rows, h_rows, H_rows = [], [], []
+            for i in range(num_pairs):
+                r = self.paired_estimations[0, i]
+                dx = self.paired_estim_diff[0, i]   # x_predicted - x_landmark
+                dy = self.paired_estim_diff[1, i]   # y_predicted - y_landmark
+
+                z_rows += [self.paired_measurements[0, i], self.paired_measurements[1, i]]
+                h_rows += [r, self.paired_estimations[1, i]]
+                # range = sqrt(dx^2 + dy^2),  bearing = atan2(-dy, -dx) - theta
+                H_rows += [[dx / r, dy / r, 0.0],
+                           [-dy / r**2, dx / r**2, -1.0]]
+
+            z_vec = np.array(z_rows).reshape(-1, 1)
+            h_vec = np.array(h_rows).reshape(-1, 1)
+            H_t_mat = np.array(H_rows)
+            q_matrix = np.kron(np.eye(num_pairs), np.diag([self.sigma_r**2, self.sigma_alpha**2]))
+
+            innovation = z_vec - h_vec
+            innovation[1::2, 0] = [normalize_angle(a) for a in innovation[1::2, 0]]
+
+            S = H_t_mat @ self.covariance @ H_t_mat.T + q_matrix
+            k_gain = self.covariance @ H_t_mat.T @ np.linalg.inv(S)
+
+            self.mu_bar = self.mu_bar + k_gain @ innovation
+            self.mu_bar[2, 0] = normalize_angle(self.mu_bar[2, 0])
+            self.covariance = (np.eye(3) - k_gain @ H_t_mat) @ self.covariance
 
         self.mu = self.mu_bar
         self.final_covariance = self.covariance
@@ -431,9 +450,17 @@ class EKF_LOCALIZATION(Node):
     def publish_cylinder_markers(self):
         marker_array = MarkerArray()
         clock = Clock()
-        # Check if any paired estimations exist
-        if hasattr(self, 'paired_estimations') and self.paired_estimations.size != 0:
-            num_markers = self.paired_estimations.shape[1]
+        # Clear last scan's spheres first, so cylinders no longer matched disappear
+        # (own ns/id so RViz's duplicate check doesn't clash with sphere id 0)
+        clear = Marker()
+        clear.header.frame_id = "odom"
+        clear.ns = "estimated_cylinders_clear"
+        clear.id = -1
+        clear.action = Marker.DELETEALL
+        marker_array.markers.append(clear)
+        # Check if any paired measurements exist
+        if hasattr(self, 'paired_measurements') and self.paired_measurements.size != 0:
+            num_markers = self.paired_measurements.shape[1]
             for i in range(num_markers):
                 marker = Marker()
                 marker.header.stamp = clock.now().to_msg()
@@ -442,15 +469,16 @@ class EKF_LOCALIZATION(Node):
                 marker.id = i
                 marker.type = Marker.SPHERE
                 marker.action = Marker.ADD
-                # Get measurement: distance and angle relative to robot's predicted pose
-                dist = self.paired_estimations[0, i]
-                ang = self.paired_estimations[1, i]
-                # Compute the estimated global coordinates:
-                x_est = self.x_predicted + dist * math.cos(self.theta_predicted + ang)
-                y_est = self.y_predicted + dist * math.sin(self.theta_predicted + ang)
+                # Where the lidar actually saw this cylinder: measured range/bearing
+                # projected from the corrected (EKF) pose. Should sit on the reference
+                # cube when the estimate is right.
+                dist = self.paired_measurements[0, i]
+                ang = self.paired_measurements[1, i]
+                x_est = self.mu[0, 0] + dist * math.cos(self.mu[2, 0] + ang)
+                y_est = self.mu[1, 0] + dist * math.sin(self.mu[2, 0] + ang)
                 marker.pose.position.x = x_est
                 marker.pose.position.y = y_est
-                marker.pose.position.z = 0.1  # slightly above the ground
+                marker.pose.position.z = 0.3  # above the reference cubes so both stay visible
                 marker.pose.orientation.x = 0.0
                 marker.pose.orientation.y = 0.0
                 marker.pose.orientation.z = 0.0
@@ -569,6 +597,10 @@ class EKF_LOCALIZATION(Node):
 
 
     def run(self):
+        # The timer can fire before the first scan arrives; wait for it
+        if not hasattr(self, 'laser_points'):
+            return
+
         # Execute the prediction step (using odometry data)
         self.pose_predictor()
         self.state_covariance_calc()

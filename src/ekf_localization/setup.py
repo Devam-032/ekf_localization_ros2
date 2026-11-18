@@ -1,4 +1,5 @@
 import os
+from glob import glob
 from setuptools import find_packages, setup
 
 package_name = 'ekf_localization'
@@ -15,7 +16,10 @@ setup(
         ('share/' + package_name, ['package.xml']),
         # Install all launch files (make sure you have a 'launch' folder in your package root)
         ('share/' + package_name + '/launch', 
-            [os.path.join('launch', f) for f in os.listdir('launch') if f.endswith('.launch.py')])
+            [os.path.join('launch', f) for f in os.listdir('launch') if f.endswith('.launch.py')]),
+        ('share/' + package_name + '/maps', glob('maps/*')),
+        ('share/' + package_name + '/rviz', glob('rviz/*.rviz')),
+        ('share/' + package_name + '/worlds', glob('worlds/*.world')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

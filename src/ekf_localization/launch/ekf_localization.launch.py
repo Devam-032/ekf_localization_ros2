@@ -2,8 +2,10 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction
+from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription, TimerAction
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
@@ -11,15 +13,30 @@ def generate_launch_description():
     tb3_gazebo_dir = get_package_share_directory('turtlebot3_gazebo')
     ekf_loc_dir = get_package_share_directory('ekf_localization')
     
-    # Use the specified RViz configuration file location directly
-    rviz_config_path = '/home/devam/FYP_ROS2/src/ekf_localization/rviz/default.rviz'
+    # RViz config and world are installed with this package
+    rviz_config_path = os.path.join(ekf_loc_dir, 'rviz', 'default.rviz')
+    world = os.path.join(ekf_loc_dir, 'worlds', 'fyp_world.world')
+    gazebo_ros_dir = get_package_share_directory('gazebo_ros')
 
-    # Include the TurtleBot3 empty world launch file (this will start Gazebo)
-    empty_world_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(tb3_gazebo_dir, 'launch', 'fyp_world.launch.py')
-        )
-    )
+    # Gazebo with the landmark world + TurtleBot3 spawned at the origin (where the EKF starts)
+    empty_world_launch = GroupAction([
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(gazebo_ros_dir, 'launch', 'gzserver.launch.py')),
+            launch_arguments={'world': world}.items()
+        ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(gazebo_ros_dir, 'launch', 'gzclient.launch.py')),
+            condition=IfCondition(LaunchConfiguration('gui'))
+        ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(tb3_gazebo_dir, 'launch', 'robot_state_publisher.launch.py')),
+            launch_arguments={'use_sim_time': 'true'}.items()
+        ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(tb3_gazebo_dir, 'launch', 'spawn_turtlebot3.launch.py')),
+            launch_arguments={'x_pose': '0.0', 'y_pose': '0.0'}.items()
+        ),
+    ])
     
     map_reader_node = TimerAction(
         period=0.0,
@@ -53,7 +70,8 @@ def generate_launch_description():
                 package='ekf_localization',
                 executable='localization',
                 name='ekf_localization_node',
-                output='screen'
+                output='screen',
+                remappings=[('/odom', LaunchConfiguration('odom_topic'))]
             )
         ]
     )
@@ -86,6 +104,10 @@ def generate_launch_description():
         )
     
     ld = LaunchDescription()
+    ld.add_action(DeclareLaunchArgument('gui', default_value='true',
+                                        description='Start the Gazebo client'))
+    ld.add_action(DeclareLaunchArgument('odom_topic', default_value='/odom',
+                                        description='Odometry the EKF predicts with (e.g. a noisy relay)'))
     ld.add_action(empty_world_launch)
     ld.add_action(map_reader_node)
     ld.add_action(map_sub_node)

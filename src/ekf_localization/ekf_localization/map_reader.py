@@ -7,6 +7,7 @@ import yaml
 import cv2
 import numpy as np
 import os
+from ament_index_python.packages import get_package_share_directory
 import math
 import tf2_ros
 
@@ -126,8 +127,7 @@ class StaticMapServer(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    # Update the path to your map.yaml file as needed.
-    yaml_file = '/home/devam/FYP_ROS2/src/ekf_localization/maps/map.yaml'
+    yaml_file = os.path.join(get_package_share_directory('ekf_localization'), 'maps', 'map.yaml')
     node = StaticMapServer(yaml_file)
     rclpy.spin(node)
     node.destroy_node()
